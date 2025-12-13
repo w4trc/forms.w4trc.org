@@ -75,6 +75,13 @@ button:hover {
   background: #245a96;
 }
 
+.optional {
+  font-weight: 400;
+  font-size: 0.9rem;
+  color: var(--w4-ink-muted);
+  margin-left: 0.35rem;
+}
+
 .notice {
   margin-top: 1.5rem;
   padding: 1rem;
@@ -94,4 +101,3 @@ button:hover {
 .thank-you a:hover {
   text-decoration: underline;
 }
-
