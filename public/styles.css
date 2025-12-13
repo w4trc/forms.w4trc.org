@@ -84,22 +84,14 @@ button:hover {
   border-radius: 8px;
 }
 
-a {
-  color: var(--w4-accent);
-  text-decoration: none;
-  font-weight: 600;
-}
-
-a:hover {
-  text-decoration: underline;
-}
-
-.link-white {
-  color: var(--w4-ink);
+/* Force white links on thank-you page */
+.thank-you a {
+  color: var(--w4-ink) !important;
   font-weight: 600;
   text-decoration: none;
 }
 
-.link-white:hover {
+.thank-you a:hover {
   text-decoration: underline;
 }
+
