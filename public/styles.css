@@ -88,7 +88,7 @@ button:hover {
 .thank-you a {
   color: var(--w4-ink) !important;
   font-weight: 600;
-  text-decoration: none;
+  text-decoration: underline;
 }
 
 .thank-you a:hover {
