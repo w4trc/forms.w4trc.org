@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Silent Key Submission</title>
+  <link rel="stylesheet" href="/styles.css" />
+</head>
+<body>
+  <div class="container">
+    <h1>Silent Key Submission</h1>
+
+    <form method="POST" action="/api/submit">
+      <h3>Your Info</h3>
+
+      <label>
+        Your Name
+        <input name="submitter_name" required />
+      </label>
+
+      <label>
+        Your Email
+        <input name="submitter_email" type="email" required />
+      </label>
+
+      <h3>Silent Key Info</h3>
+
+      <label>
+        Name
+        <input name="sk_name" required />
+      </label>
+
+      <label>
+        Callsign
+        <input name="callsign" />
+      </label>
+
+      <label>
+        Year Born
+        <input name="year_born" type="number" />
+      </label>
+
+      <label>
+        Year Passed
+        <input name="year_passed" type="number" />
+      </label>
+
+      <label>
+        Short Description
+        <textarea name="description" rows="4"></textarea>
+      </label>
+
+      <label>
+        Obituary Link
+        <input name="obituary_url" type="url" />
+      </label>
+
+      <button type="submit">Submit Silent Key</button>
+    </form>
+  </div>
+</body>
+</html>
