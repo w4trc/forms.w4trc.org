@@ -28,8 +28,9 @@ export async function onRequestPost({ request, env }) {
     body: JSON.stringify(content)
   });
 
-  return new Response(
-    "<h1>Thank you</h1><p>Your submission has been received.</p>",
-    { headers: { "Content-Type": "text/html" } }
-  );
+  return Response.redirect(
+    new URL("/thank-you.html", request.url),
+    303
+);
+
 }

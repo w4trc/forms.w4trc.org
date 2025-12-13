@@ -74,3 +74,22 @@ button {
 button:hover {
   background: #245a96;
 }
+
+.notice {
+  margin-top: 1.5rem;
+  padding: 1rem;
+  background: var(--w4-surface-2);
+  border: 1px solid var(--w4-border);
+  border-left: 4px solid var(--w4-accent);
+  border-radius: 8px;
+}
+
+a {
+  color: var(--w4-accent);
+  text-decoration: none;
+  font-weight: 600;
+}
+
+a:hover {
+  text-decoration: underline;
+}
