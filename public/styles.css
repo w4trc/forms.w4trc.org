@@ -93,3 +93,13 @@ a {
 a:hover {
   text-decoration: underline;
 }
+
+.link-white {
+  color: var(--w4-ink);
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.link-white:hover {
+  text-decoration: underline;
+}
