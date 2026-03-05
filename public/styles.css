@@ -202,6 +202,35 @@ button.cancel-btn:hover {
   color: var(--w4-ink);
 }
 
+/* Mobile */
+@media (max-width: 600px) {
+  .container {
+    margin: 1rem auto;
+    padding: 1.25rem 1rem;
+    border-radius: 0;
+    border-left: none;
+    border-right: none;
+  }
+
+  .signup-form .form-row {
+    grid-template-columns: 1fr;
+    gap: 0;
+  }
+
+  .signup-form .form-actions {
+    flex-direction: column;
+  }
+
+  .signup-form .form-actions button {
+    width: 100%;
+  }
+
+  .slot-header {
+    flex-wrap: wrap;
+    gap: 0.25rem;
+  }
+}
+
 /* Force white links on thank-you page */
 .thank-you a {
   color: var(--w4-ink) !important;
