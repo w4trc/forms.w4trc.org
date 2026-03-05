@@ -1,2 +1,8 @@
 name = "w4trc-forms"
 compatibility_date = "2024-01-01"
+account_id = "4b724b576c4285b15dfd8aa32fc83af7"
+
+[[d1_databases]]
+binding = "db"
+database_name = "w4trc-forms"
+database_id = "bc4598a7-7cd9-4af0-98f5-c0fa1284d748"

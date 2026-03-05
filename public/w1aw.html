@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>W1AW/4 Operator Signup – W4TRC</title>
+  <link rel="stylesheet" href="/styles.css" />
+  <script src="https://tracking.jclab.xyz/api/script.js" data-site-id="50f3008ab632" defer></script>
+  <style>
+    .event-hero {
+      text-align: center;
+      margin-bottom: 2rem;
+      padding-bottom: 1.5rem;
+      border-bottom: 1px solid var(--w4-border);
+    }
+    .event-hero img {
+      max-width: 220px;
+      width: 100%;
+      margin-bottom: 1.25rem;
+    }
+    .event-hero h1 {
+      margin: 0 0 0.25rem;
+      font-size: 1.6rem;
+    }
+    .event-callsign {
+      font-size: 2rem;
+      font-weight: 800;
+      color: var(--w4-accent);
+      letter-spacing: 0.05em;
+      margin: 0.1rem 0 0.5rem;
+    }
+    .event-meta {
+      color: var(--w4-ink-muted);
+      font-size: 0.95rem;
+      margin: 0;
+    }
+    .event-meta strong {
+      color: var(--w4-ink);
+    }
+
+    .about {
+      background: var(--w4-surface-2);
+      border: 1px solid var(--w4-border);
+      border-radius: 8px;
+      padding: 1.25rem 1.5rem;
+      margin-bottom: 2rem;
+      font-size: 0.95rem;
+      line-height: 1.65;
+      color: var(--w4-ink-muted);
+    }
+    .about h2 {
+      margin: 0 0 0.75rem;
+      font-size: 1rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--w4-brand);
+    }
+    .about p { margin: 0 0 0.6rem; }
+    .about p:last-child { margin: 0; }
+    .about ul {
+      margin: 0.4rem 0 0.6rem 1.25rem;
+      padding: 0;
+    }
+    .about ul li { margin-bottom: 0.3rem; }
+
+    .signup-section h2 {
+      margin: 0 0 0.25rem;
+      font-size: 1.1rem;
+    }
+    .signup-section .section-sub {
+      color: var(--w4-ink-muted);
+      font-size: 0.9rem;
+      margin: 0 0 1rem;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+
+    <!-- Hero -->
+    <div class="event-hero">
+      <img src="/images/250am.png" alt="ARRL America250 WAS" />
+      <h1>W4TRC Operating as</h1>
+      <div class="event-callsign">W1AW/4</div>
+      <p class="event-meta">
+        <strong>Warriors Path State Park</strong> &nbsp;&bull;&nbsp; <strong>June 13, 2026</strong>
+      </p>
+    </div>
+
+    <!-- About -->
+    <div class="about">
+      <h2>About the Event</h2>
+      <p>
+        W4TRC will be operating as <strong>W1AW/4 Portable</strong> from Warriors Path State Park as part of the
+        <strong>ARRL America250 Worked All States</strong> event — a year-long operating event celebrating
+        the 250th anniversary (Semiquincentennial) of the signing of the Declaration of Independence.
+      </p>
+      <p>
+        All contacts will be uploaded to <strong>Logbook of The World (LoTW)</strong>. There are no paper QSL cards
+        for W1AW/Portable stations during this event. Activity is encouraged on all FCC-authorized bands
+        (excluding 60 meters) on CW, Phone, and Digital.
+      </p>
+      <p>
+        The America250-WAS award is earned by contacting all 50 states in 2026, with endorsements available for:
+      </p>
+      <ul>
+        <li>Contacting W1AW/Portable stations in all 50 states</li>
+        <li>Contacting ARRL Affiliated Club call signs in all 50 states</li>
+        <li>Triple Play — all 50 states on CW, Phone, <em>and</em> Digital</li>
+      </ul>
+    </div>
+
+    <!-- Signup -->
+    <div class="signup-section">
+      <h2>Operator Signup</h2>
+      <p class="section-sub">Select a one-hour operating slot below. Up to 3 operators per slot.</p>
+      <div id="slots" class="slots-grid">Loading...</div>
+    </div>
+
+  </div>
+
+  <script>
+    const SLOTS = [
+      { id: "12pm", label: "12:00 PM – 1:00 PM" },
+      { id: "1pm",  label: "1:00 PM – 2:00 PM" },
+      { id: "2pm",  label: "2:00 PM – 3:00 PM" },
+      { id: "3pm",  label: "3:00 PM – 4:00 PM" },
+      { id: "4pm",  label: "4:00 PM – 5:00 PM" },
+      { id: "5pm",  label: "5:00 PM – 6:00 PM" },
+    ];
+
+    let signups = [];
+    let activeSlot = null;
+
+    async function loadSignups() {
+      const res = await fetch('/api/w1aw/signups');
+      signups = await res.json();
+      render();
+    }
+
+    function render() {
+      const container = document.getElementById('slots');
+      container.innerHTML = '';
+
+      for (const slot of SLOTS) {
+        const slotSignups = signups.filter(s => s.time_slot === slot.id);
+        const isActive = activeSlot === slot.id;
+        const isFull = slotSignups.length >= 3;
+
+        const card = document.createElement('div');
+        card.className = 'slot-card';
+
+        const listHtml = slotSignups.length > 0
+          ? '<ul class="signup-list">' +
+              slotSignups.map(s => `<li><strong>${esc(s.callsign)}</strong> &mdash; ${esc(s.name)}</li>`).join('') +
+            '</ul>'
+          : '<p class="no-signups">No signups yet</p>';
+
+        let actionHtml;
+        if (isActive) {
+          actionHtml = `<form class="signup-form" data-slot="${slot.id}">
+              <div class="form-row">
+                <label>Name <input name="op_name" required placeholder="Full Name" /></label>
+                <label>Callsign <input name="callsign" required placeholder="W4TRC" /></label>
+              </div>
+              <label>Email <input name="email" type="email" required placeholder="you@example.com" /></label>
+              <div class="form-actions">
+                <button type="submit" class="signup-btn">Confirm Signup</button>
+                <button type="button" class="cancel-btn">Cancel</button>
+              </div>
+            </form>`;
+        } else if (isFull) {
+          actionHtml = `<button class="signup-btn" disabled>Full</button>`;
+        } else {
+          actionHtml = `<button class="signup-btn" data-open="${slot.id}">Sign Up</button>`;
+        }
+
+        card.innerHTML = `
+          <div class="slot-header">
+            <span class="slot-time">${slot.label}</span>
+            <span class="slot-count">${slotSignups.length}/3 signed up</span>
+          </div>
+          ${listHtml}
+          ${actionHtml}
+        `;
+
+        if (isActive) {
+          const form = card.querySelector('form');
+          form.querySelector('.cancel-btn').addEventListener('click', () => {
+            activeSlot = null;
+            render();
+          });
+          form.addEventListener('submit', e => handleSubmit(e, slot.id));
+        } else if (!isFull) {
+          card.querySelector('[data-open]').addEventListener('click', () => {
+            activeSlot = slot.id;
+            render();
+            card.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+          });
+        }
+
+        container.appendChild(card);
+      }
+    }
+
+    async function handleSubmit(e, slotId) {
+      e.preventDefault();
+      const form = e.target;
+      const submitBtn = form.querySelector('[type=submit]');
+
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Signing up...';
+
+      const fd = new FormData(form);
+      const payload = {
+        time_slot: slotId,
+        name: fd.get('op_name'),
+        callsign: fd.get('callsign'),
+        email: fd.get('email'),
+      };
+
+      try {
+        const res = await fetch('/api/w1aw/signups', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload),
+        });
+
+        if (!res.ok) {
+          const err = await res.json().catch(() => ({}));
+          throw new Error(err.error || 'Request failed');
+        }
+
+        activeSlot = null;
+        await loadSignups();
+      } catch (err) {
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Confirm Signup';
+        alert('Error: ' + err.message);
+      }
+    }
+
+    function esc(str) {
+      return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;');
+    }
+
+    loadSignups();
+  </script>
+</body>
+</html>
