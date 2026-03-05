@@ -132,9 +132,15 @@
     let activeSlot = null;
 
     async function loadSignups() {
-      const res = await fetch('/api/w1aw/signups');
-      signups = await res.json();
-      render();
+      try {
+        const res = await fetch('/api/w1aw/signups');
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        signups = await res.json();
+        render();
+      } catch (err) {
+        document.getElementById('slots').innerHTML =
+          `<p style="color:var(--w4-ink-muted)">Failed to load signups: ${err.message}</p>`;
+      }
     }
 
     function render() {
