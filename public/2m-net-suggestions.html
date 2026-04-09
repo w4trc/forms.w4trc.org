@@ -7,95 +7,6 @@
   <link rel="stylesheet" href="/styles.css" />
   <script src="https://tracking.jclab.xyz/api/script.js" data-site-id="50f3008ab632" defer></script>
   <style>
-    .suggestion-card {
-      background: var(--w4-surface-2);
-      border: 1px solid var(--w4-border);
-      border-radius: 8px;
-      padding: 1rem 1.25rem;
-      margin-bottom: 0.75rem;
-    }
-
-    .suggestion-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-start;
-      gap: 1rem;
-      margin-bottom: 0.4rem;
-    }
-
-    .suggestion-who {
-      font-weight: 700;
-      color: var(--w4-brand);
-    }
-
-    .suggestion-datetime {
-      font-size: 0.95rem;
-      font-weight: 600;
-      color: var(--w4-ink);
-      margin-top: 0.15rem;
-    }
-
-    .suggestion-submitted {
-      font-size: 0.8rem;
-      color: var(--w4-ink-muted);
-      white-space: nowrap;
-      flex-shrink: 0;
-    }
-
-    .suggestion-comments {
-      font-size: 0.9rem;
-      color: var(--w4-ink-muted);
-      margin-top: 0.6rem;
-      padding-top: 0.6rem;
-      border-top: 1px solid var(--w4-border);
-      line-height: 1.55;
-    }
-
-    .suggestions-section {
-      margin-top: 2rem;
-    }
-
-    .section-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: baseline;
-      margin-bottom: 1rem;
-    }
-
-    .section-header h2 {
-      margin: 0;
-      font-size: 1.1rem;
-    }
-
-    .suggestion-count {
-      font-size: 0.85rem;
-      color: var(--w4-ink-muted);
-    }
-
-    .no-suggestions {
-      font-size: 0.9rem;
-      color: var(--w4-ink-muted);
-      font-style: italic;
-      padding: 0.5rem 0;
-    }
-
-    .submit-section {
-      margin-top: 2rem;
-      padding-top: 1.5rem;
-      border-top: 1px solid var(--w4-border);
-    }
-
-    .submit-section h2 {
-      margin: 0 0 0.4rem;
-      font-size: 1.1rem;
-    }
-
-    .submit-section .section-sub {
-      font-size: 0.9rem;
-      color: var(--w4-ink-muted);
-      margin: 0 0 0.25rem;
-    }
-
     .form-row {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -115,15 +26,6 @@
         grid-template-columns: 1fr;
         gap: 0;
       }
-
-      .suggestion-header {
-        flex-direction: column;
-        gap: 0.2rem;
-      }
-
-      .suggestion-submitted {
-        white-space: normal;
-      }
     }
   </style>
 </head>
@@ -132,121 +34,32 @@
     <h1>2m Net Suggestions</h1>
 
     <div class="notice">
-      Have an idea for a W4TRC 2m Net? Suggest a date and time below.
-      Browse existing suggestions first — then add your own.
+      Have an idea for a W4TRC 2m Net? Submit your suggested date, time, and any comments below.
+      Suggestions are reviewed by club officers.
     </div>
 
-    <!-- Existing suggestions -->
-    <div class="suggestions-section">
-      <div class="section-header">
-        <h2>Current Suggestions</h2>
-        <span class="suggestion-count" id="suggestion-count"></span>
+    <form id="suggestion-form" style="margin-top: 1.5rem;">
+      <div class="form-row">
+        <label>Name <span class="optional">(or call sign)</span>
+          <input name="name" type="text" placeholder="Jane Smith" />
+        </label>
+        <label>Call Sign <span class="optional">(or name)</span>
+          <input name="callsign" type="text" placeholder="W4XYZ" />
+        </label>
       </div>
-      <div id="suggestions-list">Loading…</div>
-    </div>
-
-    <!-- Submit form -->
-    <div class="submit-section">
-      <h2>Submit a Suggestion</h2>
-      <p class="section-sub">Provide your name or call sign (or both), a suggested date and time, and any comments.</p>
-      <form id="suggestion-form">
-        <div class="form-row">
-          <label>Name <span class="optional">(or call sign)</span>
-            <input name="name" type="text" placeholder="Jane Smith" />
-          </label>
-          <label>Call Sign <span class="optional">(or name)</span>
-            <input name="callsign" type="text" placeholder="W4XYZ" />
-          </label>
-        </div>
-        <label>Suggested Date &amp; Time
-          <input name="suggested_datetime" type="datetime-local" required />
-        </label>
-        <label>Comments <span class="optional">(optional)</span>
-          <textarea name="comments" rows="3" placeholder="Reason for this date, special event, topics, etc."></textarea>
-        </label>
-        <div class="form-actions">
-          <button type="submit" id="submit-btn" data-rybbit-event="form_submit">Submit Suggestion</button>
-        </div>
-      </form>
-    </div>
+      <label>Suggested Date &amp; Time
+        <input name="suggested_datetime" type="text" required placeholder="e.g. Saturday April 19 at 8pm" />
+      </label>
+      <label>Comments <span class="optional">(optional)</span>
+        <textarea name="comments" rows="3" placeholder="Reason for this date, special event, topics, etc."></textarea>
+      </label>
+      <div class="form-actions">
+        <button type="submit" id="submit-btn" data-rybbit-event="form_submit">Submit Suggestion</button>
+      </div>
+    </form>
   </div>
 
   <script>
-    let suggestions = [];
-
-    async function loadSuggestions() {
-      try {
-        const res = await fetch('/api/2m-net/suggestions');
-        if (!res.ok) throw new Error(`HTTP ${res.status}`);
-        suggestions = await res.json();
-        renderSuggestions();
-      } catch (err) {
-        document.getElementById('suggestions-list').innerHTML =
-          `<p style="color:var(--w4-ink-muted)">Failed to load suggestions: ${esc(err.message)}</p>`;
-      }
-    }
-
-    function formatDatetime(dt) {
-      if (!dt) return '—';
-      // datetime-local values are stored without timezone; treat as local
-      const d = new Date(dt.includes('T') ? dt : dt.replace(' ', 'T'));
-      if (isNaN(d.getTime())) return dt;
-      return d.toLocaleString('en-US', {
-        weekday: 'short',
-        year: 'numeric',
-        month: 'short',
-        day: 'numeric',
-        hour: 'numeric',
-        minute: '2-digit',
-        hour12: true,
-      });
-    }
-
-    function formatSubmitted(createdAt) {
-      if (!createdAt) return '';
-      const d = new Date(createdAt.endsWith('Z') ? createdAt : createdAt + 'Z');
-      return 'Submitted ' + d.toLocaleDateString('en-US', {
-        month: 'short', day: 'numeric', year: 'numeric',
-      });
-    }
-
-    function renderSuggestions() {
-      const container = document.getElementById('suggestions-list');
-      const countEl = document.getElementById('suggestion-count');
-
-      countEl.textContent = suggestions.length === 1
-        ? '1 suggestion'
-        : `${suggestions.length} suggestions`;
-
-      if (suggestions.length === 0) {
-        container.innerHTML = '<p class="no-suggestions">No suggestions yet — be the first!</p>';
-        return;
-      }
-
-      container.innerHTML = suggestions.map(s => {
-        const parts = [
-          s.callsign ? `<strong>${esc(s.callsign.toUpperCase())}</strong>` : '',
-          s.name ? esc(s.name) : '',
-        ].filter(Boolean);
-        const who = parts.length ? parts.join(' &mdash; ') : 'Anonymous';
-
-        const commentsHtml = s.comments
-          ? `<div class="suggestion-comments">${esc(s.comments)}</div>`
-          : '';
-
-        return `<div class="suggestion-card">
-          <div class="suggestion-header">
-            <div>
-              <div class="suggestion-who">${who}</div>
-              <div class="suggestion-datetime">${esc(formatDatetime(s.suggested_datetime))}</div>
-            </div>
-            <span class="suggestion-submitted">${esc(formatSubmitted(s.created_at))}</span>
-          </div>
-          ${commentsHtml}
-        </div>`;
-      }).join('');
-    }
-
     document.getElementById('suggestion-form').addEventListener('submit', async e => {
       e.preventDefault();
       const form = e.target;
@@ -255,7 +68,7 @@
       const fd = new FormData(form);
       const name = fd.get('name').trim();
       const callsign = fd.get('callsign').trim();
-      const suggested_datetime = fd.get('suggested_datetime');
+      const suggested_datetime = fd.get('suggested_datetime').trim();
       const comments = fd.get('comments').trim();
 
       if (!name && !callsign) {
@@ -279,25 +92,17 @@
         }
 
         form.reset();
-        await loadSuggestions();
-        document.getElementById('suggestions-list').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        submitBtn.textContent = 'Submitted!';
+        setTimeout(() => {
+          submitBtn.disabled = false;
+          submitBtn.textContent = 'Submit Suggestion';
+        }, 3000);
       } catch (err) {
         alert('Error: ' + err.message);
-      } finally {
         submitBtn.disabled = false;
         submitBtn.textContent = 'Submit Suggestion';
       }
     });
-
-    function esc(str) {
-      return String(str)
-        .replace(/&/g, '&amp;')
-        .replace(/</g, '&lt;')
-        .replace(/>/g, '&gt;')
-        .replace(/"/g, '&quot;');
-    }
-
-    loadSuggestions();
   </script>
 </body>
 </html>
