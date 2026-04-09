@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>2m Net Suggestions – W4TRC</title>
+  <link rel="stylesheet" href="/styles.css" />
+  <script src="https://tracking.jclab.xyz/api/script.js" data-site-id="50f3008ab632" defer></script>
+  <style>
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.75rem;
+    }
+
+    .form-row label {
+      margin-top: 0.75rem;
+    }
+
+    .form-actions {
+      margin-top: 1.25rem;
+    }
+
+    @media (max-width: 600px) {
+      .form-row {
+        grid-template-columns: 1fr;
+        gap: 0;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>2m Net Suggestions</h1>
+
+    <div class="notice">
+      Have an idea for a W4TRC 2m Net? Submit your suggested date, time, and any comments below.
+      Suggestions are reviewed by club officers.
+    </div>
+
+    <form id="suggestion-form" style="margin-top: 1.5rem;">
+      <div class="form-row">
+        <label>Name <span class="optional">(or call sign)</span>
+          <input name="name" type="text" placeholder="Jane Smith" />
+        </label>
+        <label>Call Sign <span class="optional">(or name)</span>
+          <input name="callsign" type="text" placeholder="W4XYZ" />
+        </label>
+      </div>
+      <label>Suggested Date &amp; Time
+        <input name="suggested_datetime" type="text" required placeholder="e.g. Saturday April 19 at 8pm" />
+      </label>
+      <label>Comments <span class="optional">(optional)</span>
+        <textarea name="comments" rows="3" placeholder="Reason for this date, special event, topics, etc."></textarea>
+      </label>
+      <div class="form-actions">
+        <button type="submit" id="submit-btn" data-rybbit-event="form_submit">Submit Suggestion</button>
+      </div>
+    </form>
+  </div>
+
+  <script>
+    document.getElementById('suggestion-form').addEventListener('submit', async e => {
+      e.preventDefault();
+      const form = e.target;
+      const submitBtn = document.getElementById('submit-btn');
+
+      const fd = new FormData(form);
+      const name = fd.get('name').trim();
+      const callsign = fd.get('callsign').trim();
+      const suggested_datetime = fd.get('suggested_datetime').trim();
+      const comments = fd.get('comments').trim();
+
+      if (!name && !callsign) {
+        alert('Please provide at least a name or call sign.');
+        return;
+      }
+
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Submitting…';
+
+      try {
+        const res = await fetch('/api/2m-net/suggestions', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ name, callsign, suggested_datetime, comments }),
+        });
+
+        if (!res.ok) {
+          const err = await res.json().catch(() => ({}));
+          throw new Error(err.error || 'Request failed');
+        }
+
+        form.reset();
+        submitBtn.textContent = 'Submitted!';
+        setTimeout(() => {
+          submitBtn.disabled = false;
+          submitBtn.textContent = 'Submit Suggestion';
+        }, 3000);
+      } catch (err) {
+        alert('Error: ' + err.message);
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Submit Suggestion';
+      }
+    });
+  </script>
+</body>
+</html>

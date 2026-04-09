@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>2m Net Suggestions – Officer View – W4TRC</title>
+  <link rel="stylesheet" href="/styles.css" />
+  <style>
+    .view-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.5rem;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .view-header h1 {
+      margin: 0;
+    }
+
+    .view-meta {
+      font-size: 0.85rem;
+      color: var(--w4-ink-muted);
+    }
+
+    button.refresh-btn {
+      margin-top: 0;
+      padding: 0.45rem 0.9rem;
+      font-size: 0.85rem;
+    }
+
+    .suggestion-card {
+      background: var(--w4-surface-2);
+      border: 1px solid var(--w4-border);
+      border-radius: 8px;
+      padding: 1rem 1.25rem;
+      margin-bottom: 0.75rem;
+    }
+
+    .suggestion-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 1rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .suggestion-who {
+      font-weight: 700;
+      color: var(--w4-brand);
+      font-size: 1rem;
+    }
+
+    .suggestion-submitted {
+      font-size: 0.8rem;
+      color: var(--w4-ink-muted);
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+
+    .suggestion-datetime {
+      margin-top: 0.25rem;
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: var(--w4-accent);
+    }
+
+    .suggestion-comments {
+      margin-top: 0.6rem;
+      padding-top: 0.6rem;
+      border-top: 1px solid var(--w4-border);
+      font-size: 0.9rem;
+      color: var(--w4-ink-muted);
+      line-height: 1.55;
+    }
+
+    .no-suggestions {
+      font-size: 0.9rem;
+      color: var(--w4-ink-muted);
+      font-style: italic;
+    }
+
+    .count-badge {
+      display: inline-block;
+      background: var(--w4-surface-2);
+      border: 1px solid var(--w4-border);
+      border-radius: 99px;
+      padding: 0.15rem 0.65rem;
+      font-size: 0.8rem;
+      color: var(--w4-ink-muted);
+      vertical-align: middle;
+      margin-left: 0.5rem;
+    }
+
+    @media (max-width: 600px) {
+      .suggestion-top {
+        flex-direction: column;
+        gap: 0.2rem;
+      }
+
+      .suggestion-submitted {
+        white-space: normal;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="view-header">
+      <div>
+        <h1>2m Net Suggestions <span class="count-badge" id="count-badge">…</span></h1>
+        <p class="view-meta" style="margin: 0.25rem 0 0;">Officer view &mdash; not public</p>
+      </div>
+      <button class="refresh-btn" onclick="loadSuggestions()">Refresh</button>
+    </div>
+
+    <div id="suggestions-list">Loading…</div>
+  </div>
+
+  <script>
+    async function loadSuggestions() {
+      const container = document.getElementById('suggestions-list');
+      container.innerHTML = 'Loading…';
+
+      try {
+        const res = await fetch('/api/2m-net/suggestions');
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        const suggestions = await res.json();
+        render(suggestions);
+      } catch (err) {
+        container.innerHTML =
+          `<p style="color:var(--w4-ink-muted)">Failed to load: ${esc(err.message)}</p>`;
+        document.getElementById('count-badge').textContent = '?';
+      }
+    }
+
+    function render(suggestions) {
+      const container = document.getElementById('suggestions-list');
+      const badge = document.getElementById('count-badge');
+
+      badge.textContent = suggestions.length;
+
+      if (suggestions.length === 0) {
+        container.innerHTML = '<p class="no-suggestions">No suggestions yet.</p>';
+        return;
+      }
+
+      container.innerHTML = suggestions.map(s => {
+        const callsignHtml = s.callsign
+          ? `<strong>${esc(s.callsign.toUpperCase())}</strong>`
+          : '';
+        const nameHtml = s.name ? esc(s.name) : '';
+        const who = [callsignHtml, nameHtml].filter(Boolean).join(' &mdash; ') || '<em>Anonymous</em>';
+
+        const commentsHtml = s.comments
+          ? `<div class="suggestion-comments">${esc(s.comments)}</div>`
+          : '';
+
+        return `<div class="suggestion-card">
+          <div class="suggestion-top">
+            <div>
+              <div class="suggestion-who">${who}</div>
+              <div class="suggestion-datetime">${esc(s.suggested_datetime)}</div>
+            </div>
+            <span class="suggestion-submitted">${esc(formatSubmitted(s.created_at))}</span>
+          </div>
+          ${commentsHtml}
+        </div>`;
+      }).join('');
+    }
+
+    function formatSubmitted(createdAt) {
+      if (!createdAt) return '';
+      const d = new Date(createdAt.endsWith('Z') ? createdAt : createdAt + 'Z');
+      return d.toLocaleString('en-US', {
+        month: 'short', day: 'numeric', year: 'numeric',
+        hour: 'numeric', minute: '2-digit', hour12: true,
+      });
+    }
+
+    function esc(str) {
+      return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;');
+    }
+
+    loadSuggestions();
+  </script>
+</body>
+</html>
