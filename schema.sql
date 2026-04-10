@@ -12,7 +12,8 @@ CREATE TABLE IF NOT EXISTS field_day_signups (
   name TEXT NOT NULL,
   callsign TEXT NOT NULL,
   num_people INTEGER NOT NULL DEFAULT 1,
-  potluck_item TEXT NOT NULL DEFAULT ''
+  potluck_item TEXT NOT NULL DEFAULT '',
+  created_at TEXT
 );
   
 CREATE TABLE IF NOT EXISTS net_suggestions (

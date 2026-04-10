@@ -26,7 +26,7 @@ export async function onRequestPost({ request, env }) {
   }
 
   await env.db.prepare(
-    "INSERT INTO field_day_signups (name, callsign, num_people, potluck_item) VALUES (?, ?, ?, ?)"
+    "INSERT INTO field_day_signups (name, callsign, num_people, potluck_item, created_at) VALUES (?, ?, ?, ?, datetime('now'))"
   ).bind(
     name.trim(),
     callsign.trim().toUpperCase(),
