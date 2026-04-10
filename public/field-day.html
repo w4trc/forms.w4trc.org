@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Field Day 2026 Signup – W4TRC</title>
+  <link rel="stylesheet" href="/styles.css" />
+  <script src="https://tracking.jclab.xyz/api/script.js" data-site-id="50f3008ab632" defer></script>
+  <style>
+    .event-hero {
+      text-align: center;
+      margin-bottom: 2rem;
+      padding-bottom: 1.5rem;
+      border-bottom: 1px solid var(--w4-border);
+    }
+    .event-hero h1 {
+      margin: 0 0 0.25rem;
+      font-size: 1.6rem;
+    }
+    .event-callsign {
+      font-size: 2rem;
+      font-weight: 800;
+      color: var(--w4-accent);
+      letter-spacing: 0.05em;
+      margin: 0.1rem 0 0.5rem;
+    }
+    .event-meta {
+      color: var(--w4-ink-muted);
+      font-size: 0.95rem;
+      margin: 0;
+    }
+    .event-meta strong {
+      color: var(--w4-ink);
+    }
+    @media (max-width: 600px) {
+      .event-hero h1 { font-size: 1.2rem; }
+      .event-callsign { font-size: 1.6rem; }
+      .about { padding: 1rem; }
+    }
+
+    .about {
+      background: var(--w4-surface-2);
+      border: 1px solid var(--w4-border);
+      border-radius: 8px;
+      padding: 1.25rem 1.5rem;
+      margin-bottom: 2rem;
+      font-size: 0.95rem;
+      line-height: 1.65;
+      color: var(--w4-ink-muted);
+    }
+    .about h2 {
+      margin: 0 0 0.75rem;
+      font-size: 1rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--w4-brand);
+    }
+    .about p { margin: 0 0 0.6rem; }
+    .about p:last-child { margin: 0; }
+
+    /* Signup form card */
+    .signup-card {
+      background: var(--w4-surface-2);
+      border: 1px solid var(--w4-border);
+      border-radius: 8px;
+      padding: 1.5rem;
+      margin-bottom: 2rem;
+    }
+    .signup-card h2 {
+      margin: 0 0 1rem;
+      font-size: 1.1rem;
+    }
+    .signup-form .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.75rem;
+      margin-bottom: 0.75rem;
+    }
+    @media (max-width: 500px) {
+      .signup-form .form-row { grid-template-columns: 1fr; }
+    }
+    .signup-form label {
+      display: flex;
+      flex-direction: column;
+      gap: 0.3rem;
+      font-size: 0.9rem;
+      color: var(--w4-ink-muted);
+    }
+    .signup-form label span { color: var(--w4-ink); font-weight: 600; }
+    .signup-form input,
+    .signup-form textarea {
+      background: var(--w4-surface);
+      border: 1px solid var(--w4-border);
+      border-radius: 5px;
+      color: var(--w4-ink);
+      padding: 0.5rem 0.65rem;
+      font-size: 0.95rem;
+      font-family: inherit;
+      width: 100%;
+      box-sizing: border-box;
+    }
+    .signup-form input:focus,
+    .signup-form textarea:focus {
+      outline: 2px solid var(--w4-brand);
+      outline-offset: 1px;
+    }
+    .signup-form textarea {
+      resize: vertical;
+      min-height: 80px;
+    }
+    .signup-form .field-full {
+      margin-bottom: 0.75rem;
+    }
+    .form-actions {
+      margin-top: 1rem;
+      display: flex;
+      gap: 0.75rem;
+      align-items: center;
+    }
+    #form-status {
+      font-size: 0.9rem;
+      color: var(--w4-ink-muted);
+    }
+    #form-status.error { color: #f87171; }
+    #form-status.success { color: #4ade80; }
+
+    /* Registrations list */
+    .registrations-section h2 {
+      margin: 0 0 0.25rem;
+      font-size: 1.1rem;
+    }
+    .registrations-section .section-sub {
+      color: var(--w4-ink-muted);
+      font-size: 0.9rem;
+      margin: 0 0 1rem;
+    }
+    #registrations-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+    .reg-card {
+      background: var(--w4-surface-2);
+      border: 1px solid var(--w4-border);
+      border-radius: 8px;
+      padding: 1rem 1.25rem;
+    }
+    .reg-header {
+      display: flex;
+      align-items: baseline;
+      gap: 0.75rem;
+      flex-wrap: wrap;
+      margin-bottom: 0.3rem;
+    }
+    .reg-callsign {
+      font-size: 1.1rem;
+      font-weight: 800;
+      color: var(--w4-accent);
+      letter-spacing: 0.04em;
+    }
+    .reg-name {
+      font-weight: 600;
+      color: var(--w4-ink);
+    }
+    .reg-people {
+      font-size: 0.85rem;
+      color: var(--w4-ink-muted);
+      margin-left: auto;
+    }
+    .reg-potluck {
+      font-size: 0.9rem;
+      color: var(--w4-ink-muted);
+      margin-top: 0.25rem;
+    }
+    .reg-potluck strong { color: var(--w4-ink); }
+    .no-regs {
+      color: var(--w4-ink-muted);
+      font-size: 0.95rem;
+    }
+    .reg-count-badge {
+      display: inline-block;
+      background: var(--w4-brand);
+      color: #fff;
+      font-size: 0.8rem;
+      font-weight: 700;
+      padding: 0.15rem 0.55rem;
+      border-radius: 999px;
+      margin-left: 0.5rem;
+      vertical-align: middle;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+
+    <!-- Hero -->
+    <div class="event-hero">
+      <h1>W4TRC</h1>
+      <div class="event-callsign">Field Day 2026</div>
+      <p class="event-meta">
+        <strong>June 27–28, 2026</strong> &nbsp;&bull;&nbsp; Potluck &amp; Operating Event
+      </p>
+    </div>
+
+    <!-- About -->
+    <div class="about">
+      <h2>About Field Day</h2>
+      <p>
+        ARRL Field Day is ham radio's largest on-the-air event, held annually on the fourth full weekend of June.
+        W4TRC will be setting up and operating as a club — come join us for food, fellowship, and radio!
+      </p>
+      <p>
+        We're also making it a potluck, so please let us know what you plan to bring so we can coordinate and make
+        sure we have a great spread. Fill out the form below to let us know you're coming.
+      </p>
+    </div>
+
+    <!-- Signup Form -->
+    <div class="signup-card">
+      <h2>RSVP / Sign Up</h2>
+      <form class="signup-form" id="signup-form">
+        <div class="form-row">
+          <label>
+            <span>Name *</span>
+            <input name="name" required placeholder="Your Name" autocomplete="name" />
+          </label>
+          <label>
+            <span>Callsign *</span>
+            <input name="callsign" required placeholder="W4TRC" autocomplete="off" />
+          </label>
+        </div>
+        <div class="form-row">
+          <label>
+            <span>Number of People Attending *</span>
+            <input name="num_people" type="number" required min="1" max="20" value="1" placeholder="1" />
+          </label>
+        </div>
+        <div class="field-full">
+          <label>
+            <span>What are you bringing for the potluck?</span>
+            <textarea name="potluck_item" placeholder="e.g. Potato salad, paper plates, nothing yet…"></textarea>
+          </label>
+        </div>
+        <div class="form-actions">
+          <button type="submit" class="signup-btn" id="submit-btn">Submit RSVP</button>
+          <span id="form-status"></span>
+        </div>
+      </form>
+    </div>
+
+    <!-- Registrations -->
+    <div class="registrations-section">
+      <h2>
+        Who's Coming
+        <span class="reg-count-badge" id="reg-count">0</span>
+      </h2>
+      <p class="section-sub">Everyone who has signed up so far.</p>
+      <div id="registrations-list">Loading...</div>
+    </div>
+
+  </div>
+
+  <script>
+    let registrations = [];
+
+    async function loadRegistrations() {
+      try {
+        const res = await fetch('/api/field-day/signups');
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        registrations = await res.json();
+        renderRegistrations();
+      } catch (err) {
+        document.getElementById('registrations-list').innerHTML =
+          `<p class="no-regs">Failed to load registrations: ${esc(err.message)}</p>`;
+      }
+    }
+
+    function renderRegistrations() {
+      const container = document.getElementById('registrations-list');
+      const countBadge = document.getElementById('reg-count');
+
+      const total = registrations.reduce((sum, r) => sum + (r.num_people || 1), 0);
+      countBadge.textContent = total + ' ' + (total === 1 ? 'person' : 'people');
+
+      if (registrations.length === 0) {
+        container.innerHTML = '<p class="no-regs">No signups yet — be the first!</p>';
+        return;
+      }
+
+      container.innerHTML = registrations.map(r => {
+        const potluck = r.potluck_item
+          ? `<div class="reg-potluck"><strong>Bringing:</strong> ${esc(r.potluck_item)}</div>`
+          : '';
+        const people = r.num_people > 1
+          ? `<span class="reg-people">+${r.num_people - 1} guest${r.num_people - 1 !== 1 ? 's' : ''}</span>`
+          : '';
+        return `
+          <div class="reg-card">
+            <div class="reg-header">
+              <span class="reg-callsign">${esc(r.callsign)}</span>
+              <span class="reg-name">${esc(r.name)}</span>
+              ${people}
+            </div>
+            ${potluck}
+          </div>
+        `;
+      }).join('');
+    }
+
+    document.getElementById('signup-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const form = e.target;
+      const submitBtn = document.getElementById('submit-btn');
+      const status = document.getElementById('form-status');
+
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Submitting…';
+      status.textContent = '';
+      status.className = '';
+
+      const fd = new FormData(form);
+      const payload = {
+        name: fd.get('name'),
+        callsign: fd.get('callsign'),
+        num_people: parseInt(fd.get('num_people'), 10),
+        potluck_item: fd.get('potluck_item'),
+      };
+
+      try {
+        const res = await fetch('/api/field-day/signups', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload),
+        });
+
+        if (!res.ok) {
+          const err = await res.json().catch(() => ({}));
+          throw new Error(err.error || 'Request failed');
+        }
+
+        form.reset();
+        form.querySelector('[name=num_people]').value = '1';
+        status.textContent = 'You\'re signed up!';
+        status.className = 'success';
+        await loadRegistrations();
+      } catch (err) {
+        status.textContent = 'Error: ' + err.message;
+        status.className = 'error';
+      } finally {
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Submit RSVP';
+      }
+    });
+
+    function esc(str) {
+      return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;');
+    }
+
+    loadRegistrations();
+  </script>
+</body>
+</html>
