@@ -13,5 +13,13 @@ CREATE TABLE IF NOT EXISTS field_day_signups (
   callsign TEXT NOT NULL,
   num_people INTEGER NOT NULL DEFAULT 1,
   potluck_item TEXT NOT NULL DEFAULT '',
+ );
+  
+CREATE TABLE IF NOT EXISTS net_suggestions (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  name TEXT,
+  callsign TEXT,
+  suggested_datetime TEXT NOT NULL,
+  comments TEXT,
   created_at TEXT NOT NULL DEFAULT (datetime('now'))
 );
