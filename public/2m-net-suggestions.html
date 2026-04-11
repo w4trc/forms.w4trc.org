@@ -53,6 +53,10 @@
       <label>Comments <span class="optional">(optional)</span>
         <textarea name="comments" rows="3" placeholder="Reason for this date, comments, topics, etc."></textarea>
       </label>
+      <label style="flex-direction: row; align-items: center; gap: 0.5rem; margin-top: 0.75rem; cursor: pointer;">
+        <input name="willing_net_control" type="checkbox" style="width: auto; margin: 0;" />
+        I would be willing to volunteer as net control
+      </label>
       <div class="form-actions">
         <button type="submit" id="submit-btn" data-rybbit-event="form_submit">Submit Suggestion</button>
       </div>
@@ -70,6 +74,7 @@
       const callsign = fd.get('callsign').trim();
       const suggested_datetime = fd.get('suggested_datetime').trim();
       const comments = fd.get('comments').trim();
+      const willing_net_control = form.querySelector('[name="willing_net_control"]').checked;
 
       if (!name && !callsign) {
         alert('Please provide at least a name or call sign.');
@@ -83,7 +88,7 @@
         const res = await fetch('/api/2m-net/suggestions', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ name, callsign, suggested_datetime, comments }),
+          body: JSON.stringify({ name, callsign, suggested_datetime, comments, willing_net_control }),
         });
 
         if (!res.ok) {

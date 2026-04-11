@@ -75,6 +75,13 @@
       line-height: 1.55;
     }
 
+    .suggestion-net-control {
+      margin-top: 0.3rem;
+      font-size: 0.8rem;
+      color: var(--w4-accent);
+      font-weight: 600;
+    }
+
     .no-suggestions {
       font-size: 0.9rem;
       color: var(--w4-ink-muted);
@@ -157,11 +164,16 @@
           ? `<div class="suggestion-comments">${esc(s.comments)}</div>`
           : '';
 
+        const netControlHtml = s.willing_net_control
+          ? `<div class="suggestion-net-control">Willing to volunteer as net control</div>`
+          : '';
+
         return `<div class="suggestion-card">
           <div class="suggestion-top">
             <div>
               <div class="suggestion-who">${who}</div>
               <div class="suggestion-datetime">${esc(s.suggested_datetime)}</div>
+              ${netControlHtml}
             </div>
             <span class="suggestion-submitted">${esc(formatSubmitted(s.created_at))}</span>
           </div>
