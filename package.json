@@ -6,6 +6,9 @@
     "@sentry/cloudflare": "^8"
   },
   "scripts": {
-    "build": "cp node_modules/@sentry/browser/build/bundle.min.js public/sentry.min.js"
+    "build": "esbuild sentry-browser-entry.js --bundle --minify --format=iife --global-name=Sentry --outfile=public/sentry.min.js"
+  },
+  "devDependencies": {
+    "esbuild": "^0.28.0"
   }
 }
