@@ -1,0 +1,7 @@
+{
+  "name": "w4trc-forms",
+  "private": true,
+  "dependencies": {
+    "@sentry/cloudflare": "^8"
+  }
+}
