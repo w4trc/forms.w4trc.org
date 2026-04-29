@@ -6,15 +6,8 @@
   <title>Field Day 2026 Signup – W4TRC</title>
   <link rel="stylesheet" href="/styles.css" />
   <script src="https://tracking.jclab.xyz/api/script.js" data-site-id="50f3008ab632" defer></script>
-  <script src="https://cdn.jsdelivr.net/npm/@sentry/browser@8/build/bundle.min.js" crossorigin="anonymous"></script>
-  <script>
-    Sentry.init({
-      dsn: "https://d3378c1535a247199b9caa050f3d7852@glitchtip.jclab.xyz/1",
-      tracesSampleRate: 0.75,
-      autoSessionTracking: false,
-      integrations: [Sentry.captureConsoleIntegration({ levels: ["error", "warn"] })],
-    });
-  </script>
+  <script src="/sentry.min.js"></script>
+  <script src="/sentry-init.js"></script>
   <style>
     .event-hero {
       text-align: center;
