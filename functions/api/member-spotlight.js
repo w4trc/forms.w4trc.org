@@ -8,6 +8,7 @@ export async function onRequestPost({ request, env }) {
   const story    = formData.get('story')    || '—';
   const fun_fact = formData.get('fun_fact') || '—';
   const memorable = formData.get('memorable') || '—';
+  const video_interest = formData.get('video_interest') === 'yes' ? 'Yes' : 'No';
   const photo    = formData.get('photo');
 
   const embed = {
@@ -21,6 +22,7 @@ export async function onRequestPost({ request, env }) {
       { name: 'Their Story',    value: story.slice(0, 1024) },
       { name: 'Fun Fact',       value: fun_fact.slice(0, 1024) },
       { name: 'Most Memorable Radio Experience', value: memorable.slice(0, 1024) },
+      { name: 'Open to Video Interview?', value: video_interest, inline: true },
     ],
   };
 

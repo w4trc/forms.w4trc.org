@@ -46,6 +46,20 @@ label {
   font-weight: 600;
 }
 
+label.checkbox-label {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-weight: 400;
+  cursor: pointer;
+}
+
+label.checkbox-label input[type="checkbox"] {
+  width: auto;
+  margin: 0;
+  cursor: pointer;
+}
+
 input[type="file"] {
   padding: 0.5rem 0.6rem;
   cursor: pointer;
