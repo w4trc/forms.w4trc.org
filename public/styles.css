@@ -47,7 +47,8 @@ label {
 }
 
 label.checkbox-label {
-  display: flex;
+  display: flex !important;
+  flex-direction: row;
   align-items: center;
   gap: 0.6rem;
   font-weight: 400;
@@ -55,8 +56,10 @@ label.checkbox-label {
 }
 
 label.checkbox-label input[type="checkbox"] {
-  width: auto;
-  margin: 0;
+  width: auto !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  flex-shrink: 0;
   cursor: pointer;
 }
 
