@@ -46,6 +46,11 @@ label {
   font-weight: 600;
 }
 
+input[type="file"] {
+  padding: 0.5rem 0.6rem;
+  cursor: pointer;
+}
+
 input, textarea {
   width: 100%;
   box-sizing: border-box;

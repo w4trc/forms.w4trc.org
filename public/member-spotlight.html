@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Member Spotlight — W4TRC</title>
+  <link rel="stylesheet" href="/styles.css" />
+  <script src="https://tracking.jclab.xyz/api/script.js" data-site-id="50f3008ab632" defer></script>
+  <script src="/sentry.min.js"></script>
+  <script src="/sentry-init.js"></script>
+</head>
+<body>
+  <div class="container">
+    <h1>Member Spotlight</h1>
+
+    <div class="notice">
+      <strong>Please note:</strong> Anything you submit may be featured in W4TRC club materials,
+      social media posts, newsletters, or on the club website. Submissions may be lightly edited
+      or cleaned up for clarity and formatting.
+    </div>
+
+    <form method="POST" action="/api/member-spotlight" enctype="multipart/form-data">
+      <h3>About You</h3>
+
+      <label>
+        Callsign
+        <input name="callsign" required autocomplete="off" />
+      </label>
+
+      <label>
+        Name
+        <input name="name" required />
+      </label>
+
+      <label>
+        Email
+        <input name="email" type="email" required />
+      </label>
+
+      <label>
+        When did you get licensed?
+        <input name="licensed" placeholder="e.g. 2019, March 2007, age 16…" required />
+      </label>
+
+      <h3>Your Story</h3>
+
+      <label>
+        Tell us your ham radio story
+        <textarea name="story" rows="5" placeholder="How did you get into amateur radio? What has the hobby meant to you?" required></textarea>
+      </label>
+
+      <label>
+        Fun fact about yourself <span class="optional">Optional</span>
+        <textarea name="fun_fact" rows="3" placeholder="Something interesting people might not know about you"></textarea>
+      </label>
+
+      <label>
+        Most memorable radio experience <span class="optional">Optional</span>
+        <textarea name="memorable" rows="4" placeholder="A QSO, contest, field day moment, emergency comm — whatever stands out"></textarea>
+      </label>
+
+      <h3>Photo</h3>
+
+      <label>
+        Upload a photo of yourself <span class="optional">Optional</span>
+        <input name="photo" type="file" accept="image/*" />
+      </label>
+
+      <button type="submit">Submit Spotlight</button>
+    </form>
+  </div>
+</body>
+</html>
