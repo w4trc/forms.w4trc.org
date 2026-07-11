@@ -16,6 +16,15 @@ CREATE TABLE IF NOT EXISTS field_day_signups (
   created_at TEXT
 );
   
+CREATE TABLE IF NOT EXISTS picnic_signups (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  name TEXT NOT NULL,
+  callsign TEXT NOT NULL DEFAULT '',
+  num_people INTEGER NOT NULL DEFAULT 1,
+  bringing_item TEXT NOT NULL DEFAULT '',
+  created_at TEXT
+);
+
 CREATE TABLE IF NOT EXISTS net_suggestions (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   name TEXT,
