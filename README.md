@@ -90,12 +90,47 @@ CREATE TABLE IF NOT EXISTS w1aw_signups (
 
 ---
 
+### Annual Picnic Signup — `/picnic`
+**File:** `public/picnic.html`
+**Handler:** `functions/api/picnic/signups.js`
+**Database:** D1 — `picnic_signups` table
+
+An interactive potluck signup sheet for W4TRC's Annual Picnic at Eastman Recreation Area (date/time and shelter number TBD — placeholders are marked in `picnic.html`).
+
+The page fetches and renders signups live via JavaScript (no page reloads). No email or notification is sent — it's just a public view of who's coming and what they're bringing.
+
+**Fields:**
+- Name (required)
+- Callsign (optional)
+- Number of people attending (required)
+- What they're bringing (optional)
+
+**API endpoints:**
+- `GET /api/picnic/signups` — returns all signups as JSON
+- `POST /api/picnic/signups` — creates a signup
+
+**D1 schema (`schema.sql`):**
+```sql
+CREATE TABLE IF NOT EXISTS picnic_signups (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  name TEXT NOT NULL,
+  callsign TEXT NOT NULL DEFAULT '',
+  num_people INTEGER NOT NULL DEFAULT 1,
+  bringing_item TEXT NOT NULL DEFAULT '',
+  created_at TEXT
+);
+```
+
+---
+
 ## Project Structure
 
 ```
 public/
   silent-key.html     # Silent Key form
   w1aw.html           # W1AW operator signup
+  field-day.html      # Field Day potluck signup
+  picnic.html         # Annual Picnic potluck signup
   thank-you.html      # Redirect target after Silent Key submission
   styles.css          # Shared dark theme styles
   images/
@@ -107,6 +142,10 @@ functions/
     submit.js         # POST handler for Silent Key
     w1aw/
       signups.js      # GET + POST handler for W1AW signups
+    field-day/
+      signups.js      # GET + POST handler for Field Day signups
+    picnic/
+      signups.js      # GET + POST handler for Picnic signups
 
 schema.sql            # D1 migration — run once with wrangler d1 execute
 wrangler.toml         # Cloudflare config (account, D1 binding)
