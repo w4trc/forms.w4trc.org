@@ -123,6 +123,26 @@ CREATE TABLE IF NOT EXISTS picnic_signups (
 
 ---
 
+### Membership Survey — `/survey` (admin: `/survey-admin`)
+**Files:** `public/survey.html`, `public/survey-admin.html`, `public/survey-questions.js`
+**Handler:** `functions/api/survey/responses.js`
+**Database:** D1 — `survey_responses` table
+
+An optional-anonymous membership survey: age range, license class, interest levels (Meshtastic/MeshCore, digital modes, contesting, fox hunting, POTA, etc.), net participation, volunteering, meetings, and free-form suggestions. Contact info is optional.
+
+**Questions live in `public/survey-questions.js`** — shared by the form, the admin view, and server-side validation. Answers are stored as JSON, so adding or rewording questions needs no migration. Don't rename an existing question `id` once responses are coming in.
+
+**Admin view** (`/survey-admin`) shows summary charts, an interest ranking, a contacts/volunteers list, all free-text suggestions, individual responses (with delete for spam), and CSV export. It's protected by a shared key.
+
+**Secret required:** `SURVEY_ADMIN_KEY` — set in Cloudflare Pages → Settings → Variables and Secrets (as a secret). For local dev, put `SURVEY_ADMIN_KEY=...` in `.dev.vars` (gitignored).
+
+**API endpoints:**
+- `POST /api/survey/responses` — public; submit a response
+- `GET /api/survey/responses` — admin; list responses (`Authorization: Bearer <key>`)
+- `DELETE /api/survey/responses?id=N` — admin; delete a response
+
+---
+
 ## Project Structure
 
 ```

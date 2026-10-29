@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Membership Survey – W4TRC</title>
+  <link rel="stylesheet" href="/styles.css" />
+  <script src="https://tracking.jclab.xyz/api/script.js" data-site-id="50f3008ab632" defer></script>
+  <script src="/sentry.min.js"></script>
+  <script src="/sentry-init.js"></script>
+  <style>
+    .lead {
+      color: var(--w4-ink-muted);
+      line-height: 1.55;
+      margin: 0;
+    }
+
+    .notice strong {
+      color: var(--w4-accent);
+    }
+
+    .notice p {
+      margin: 0;
+      line-height: 1.55;
+    }
+
+    .notice p + p {
+      margin-top: 0.5rem;
+    }
+
+    fieldset.section {
+      border: none;
+      padding: 0;
+      margin: 2.25rem 0 0;
+      min-width: 0;
+    }
+
+    fieldset.section > legend {
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: var(--w4-brand);
+      padding: 0 0 0.4rem;
+      width: 100%;
+      border-bottom: 1px solid var(--w4-border);
+    }
+
+    .section-intro {
+      margin: 0.75rem 0 0;
+      font-size: 0.92rem;
+      color: var(--w4-ink-muted);
+    }
+
+    .question {
+      margin-top: 1.4rem;
+    }
+
+    .q-label {
+      display: block;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+    }
+
+    .q-hint {
+      font-weight: 400;
+      font-size: 0.85rem;
+      color: var(--w4-ink-muted);
+    }
+
+    /* Option chips for radio / checkbox questions */
+    .choices {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+
+    .chip {
+      position: relative;
+      display: inline-flex;
+      margin: 0;
+      font-weight: 400;
+    }
+
+    .chip input {
+      position: absolute;
+      opacity: 0;
+      width: 1px;
+      height: 1px;
+      margin: 0;
+    }
+
+    .chip span {
+      display: inline-block;
+      padding: 0.45rem 0.85rem;
+      border: 1px solid var(--w4-border);
+      border-radius: 99px;
+      background: var(--w4-surface-2);
+      font-size: 0.9rem;
+      cursor: pointer;
+      user-select: none;
+      transition: background .12s, border-color .12s;
+    }
+
+    .chip span:hover {
+      border-color: rgba(255,255,255,.28);
+    }
+
+    .chip input:checked + span {
+      background: var(--w4-brand);
+      border-color: var(--w4-brand);
+      color: #fff;
+    }
+
+    .chip input:focus-visible + span {
+      outline: 2px solid var(--w4-accent);
+      outline-offset: 2px;
+    }
+
+    .other-input {
+      margin-top: 0.5rem;
+      display: none;
+    }
+
+    .other-input.show {
+      display: block;
+    }
+
+    /* Interest grid */
+    .scale-head,
+    .scale-row {
+      display: grid;
+      grid-template-columns: 1fr repeat(3, 5.5rem);
+      align-items: center;
+      gap: 0.25rem;
+    }
+
+    .scale-head {
+      font-size: 0.75rem;
+      color: var(--w4-ink-muted);
+      text-align: center;
+      padding-bottom: 0.4rem;
+      position: sticky;
+      top: 0;
+      background: var(--w4-surface);
+      z-index: 1;
+    }
+
+    .scale-row {
+      padding: 0.55rem 0;
+      border-top: 1px solid var(--w4-border);
+    }
+
+    .scale-item {
+      font-size: 0.93rem;
+    }
+
+    .scale-opt {
+      display: flex;
+      justify-content: center;
+      margin: 0;
+    }
+
+    .scale-opt input {
+      width: 1.15rem;
+      height: 1.15rem;
+      margin: 0;
+      accent-color: var(--w4-brand);
+      cursor: pointer;
+    }
+
+    .scale-opt .scale-opt-text {
+      display: none;
+    }
+
+    .contact-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0 0.75rem;
+    }
+
+    .honeypot {
+      position: absolute;
+      left: -9999px;
+      width: 1px;
+      height: 1px;
+      overflow: hidden;
+    }
+
+    .form-actions {
+      margin-top: 2rem;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .form-actions button {
+      margin-top: 0;
+    }
+
+    button:disabled {
+      opacity: .6;
+      cursor: wait;
+    }
+
+    .error-msg {
+      color: #fca5a5;
+      font-size: 0.9rem;
+    }
+
+    .thanks {
+      text-align: center;
+      padding: 2rem 0 1rem;
+    }
+
+    .thanks h2 {
+      color: var(--w4-accent);
+      margin-top: 0;
+    }
+
+    .thanks p {
+      color: var(--w4-ink-muted);
+      line-height: 1.55;
+    }
+
+    .thanks a {
+      color: var(--w4-ink);
+      font-weight: 600;
+    }
+
+    @media (max-width: 600px) {
+      .scale-head {
+        display: none;
+      }
+
+      .scale-row {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 0.4rem;
+        padding: 0.8rem 0;
+      }
+
+      .scale-item {
+        grid-column: 1 / -1;
+        font-weight: 600;
+      }
+
+      .scale-opt {
+        position: relative;
+      }
+
+      .scale-opt input {
+        position: absolute;
+        opacity: 0;
+      }
+
+      .scale-opt .scale-opt-text {
+        display: block;
+        width: 100%;
+        text-align: center;
+        padding: 0.45rem 0.25rem;
+        border: 1px solid var(--w4-border);
+        border-radius: 6px;
+        background: var(--w4-surface-2);
+        font-size: 0.8rem;
+        font-weight: 400;
+        cursor: pointer;
+      }
+
+      .scale-opt input:checked + .scale-opt-text {
+        background: var(--w4-brand);
+        border-color: var(--w4-brand);
+        color: #fff;
+      }
+
+      .scale-opt input:focus-visible + .scale-opt-text {
+        outline: 2px solid var(--w4-accent);
+        outline-offset: 2px;
+      }
+
+      .contact-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .form-actions button {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>W4TRC Membership Survey</h1>
+    <p class="lead">Help shape what W4TRC does next. It takes about 5 minutes.</p>
+
+    <div class="notice">
+      <p><strong>This survey can be completed anonymously.</strong> Every question is optional, and you don't need to give your name or call sign.</p>
+      <p>Your answers help us gauge interest in meetings, presentations, nets, and activities so we can plan things members actually want. If you'd like us to follow up with you, there's an optional contact section at the end.</p>
+    </div>
+
+    <form id="survey-form" novalidate>
+      <div id="sections"></div>
+
+      <fieldset class="section">
+        <legend>Contact Info <span class="optional">(optional)</span></legend>
+        <p class="section-intro">Leave this blank to stay anonymous. Fill it in if you'd like someone to reach out about the activities or volunteer roles you picked.</p>
+        <div class="contact-grid" id="contact-fields"></div>
+        <label class="checkbox-label" style="margin-top: 1rem;">
+          <input type="checkbox" name="contact_ok" />
+          It's OK to contact me about the things I'm interested in or offered to help with
+        </label>
+      </fieldset>
+
+      <div class="honeypot" aria-hidden="true">
+        <label>Website <input type="text" name="website" tabindex="-1" autocomplete="off" /></label>
+      </div>
+
+      <div class="form-actions">
+        <button type="submit" id="submit-btn" data-rybbit-event="survey_submit">Submit Survey</button>
+        <span class="error-msg" id="error-msg" role="alert"></span>
+      </div>
+    </form>
+
+    <div class="thanks" id="thanks" hidden>
+      <h2>Thank you!</h2>
+      <p>Your response has been recorded. We appreciate you taking the time to help shape the club.</p>
+      <p>73 de W4TRC &mdash; <a href="https://w4trc.org">back to w4trc.org</a></p>
+    </div>
+  </div>
+
+  <script type="module">
+    import { SECTIONS, CONTACT_FIELDS, MAX_TEXT, MAX_OTHER } from '/survey-questions.js';
+
+    const esc = s => String(s)
+      .replace(/&/g, '&amp;').replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+
+    function renderQuestion(q) {
+      if (q.type === 'radio' || q.type === 'checkbox') {
+        const hint = q.type === 'checkbox' ? ' <span class="q-hint">(choose any)</span>' : '';
+        const chips = q.options.map(o => `
+          <label class="chip">
+            <input type="${q.type}" name="${q.id}" value="${esc(o)}" />
+            <span>${esc(o)}</span>
+          </label>`).join('');
+        const otherChip = q.other && q.type === 'checkbox' ? `
+          <label class="chip">
+            <input type="checkbox" data-other-toggle="${q.id}" />
+            <span>Other</span>
+          </label>` : '';
+        const otherInput = q.other ? `
+          <input type="text" class="other-input" name="${q.id}_other"
+                 maxlength="${MAX_OTHER}" placeholder="Please specify…" aria-label="${esc(q.label)} – other" />` : '';
+        return `<div class="question" role="group" aria-labelledby="q-${q.id}">
+          <span class="q-label" id="q-${q.id}">${esc(q.label)}${hint}</span>
+          <div class="choices">${chips}${otherChip}</div>
+          ${otherInput}
+        </div>`;
+      }
+
+      if (q.type === 'scale') {
+        const head = `<div class="scale-head" aria-hidden="true"><span></span>${
+          q.scale.map(s => `<span>${esc(s)}</span>`).join('')}</div>`;
+        const rows = q.items.map(item => `
+          <div class="scale-row" role="radiogroup" aria-label="${esc(item.label)}">
+            <span class="scale-item">${esc(item.label)}</span>
+            ${q.scale.map((s, i) => `
+              <label class="scale-opt">
+                <input type="radio" name="${q.id}__${item.id}" value="${i}" aria-label="${esc(s)}" />
+                <span class="scale-opt-text">${esc(s.replace(' interested', ''))}</span>
+              </label>`).join('')}
+          </div>`).join('');
+        return `<div class="question">${head}${rows}</div>`;
+      }
+
+      if (q.type === 'text') {
+        return `<div class="question">
+          <label for="f-${q.id}" style="margin-top:0">${esc(q.label)}</label>
+          <textarea id="f-${q.id}" name="${q.id}" rows="${q.rows || 3}" maxlength="${MAX_TEXT}"
+                    placeholder="${esc(q.placeholder || '')}"></textarea>
+        </div>`;
+      }
+      return '';
+    }
+
+    document.getElementById('sections').innerHTML = SECTIONS.map(s => `
+      <fieldset class="section">
+        <legend>${esc(s.title)}</legend>
+        ${s.intro ? `<p class="section-intro">${esc(s.intro)}</p>` : ''}
+        ${s.questions.map(renderQuestion).join('')}
+      </fieldset>`).join('');
+
+    document.getElementById('contact-fields').innerHTML = CONTACT_FIELDS.map(f => `
+      <label>${esc(f.label)}
+        <input name="${f.id}" type="${f.type || 'text'}" maxlength="${f.max}" placeholder="${esc(f.placeholder)}" />
+      </label>`).join('');
+
+    const form = document.getElementById('survey-form');
+
+    // Show the "Other" text box when "Other" is picked.
+    form.addEventListener('change', e => {
+      const t = e.target;
+      let qid = null, show = false;
+      if (t.dataset.otherToggle) {
+        qid = t.dataset.otherToggle;
+        show = t.checked;
+      } else if (t.type === 'radio') {
+        const box = form.querySelector(`[name="${t.name}_other"]`);
+        if (box) { qid = t.name; show = t.value === 'Other'; }
+      }
+      if (!qid) return;
+      const box = form.querySelector(`[name="${qid}_other"]`);
+      box.classList.toggle('show', show);
+      if (show) box.focus(); else box.value = '';
+    });
+
+    function collect() {
+      const answers = {};
+      for (const s of SECTIONS) {
+        for (const q of s.questions) {
+          if (q.type === 'radio') {
+            const el = form.querySelector(`[name="${q.id}"]:checked`);
+            if (el) answers[q.id] = el.value;
+          } else if (q.type === 'checkbox') {
+            const picked = [...form.querySelectorAll(`[name="${q.id}"]:checked`)].map(el => el.value);
+            if (picked.length) answers[q.id] = picked;
+          } else if (q.type === 'scale') {
+            const grid = {};
+            for (const item of q.items) {
+              const el = form.querySelector(`[name="${q.id}__${item.id}"]:checked`);
+              if (el) grid[item.id] = Number(el.value);
+            }
+            if (Object.keys(grid).length) answers[q.id] = grid;
+          } else if (q.type === 'text') {
+            const v = form.querySelector(`[name="${q.id}"]`).value.trim();
+            if (v) answers[q.id] = v;
+          }
+          if (q.other) {
+            const v = form.querySelector(`[name="${q.id}_other"]`).value.trim();
+            if (v) answers[q.id + '_other'] = v;
+          }
+        }
+      }
+
+      const payload = { answers };
+      for (const f of CONTACT_FIELDS) payload[f.id] = form.querySelector(`[name="${f.id}"]`).value.trim();
+      payload.contact_ok = form.querySelector('[name="contact_ok"]').checked;
+      payload.website = form.querySelector('[name="website"]').value;
+      return payload;
+    }
+
+    form.addEventListener('submit', async e => {
+      e.preventDefault();
+      const btn = document.getElementById('submit-btn');
+      const errEl = document.getElementById('error-msg');
+      errEl.textContent = '';
+
+      const payload = collect();
+      const hasContact = CONTACT_FIELDS.some(f => payload[f.id]);
+      if (!Object.keys(payload.answers).length && !hasContact) {
+        errEl.textContent = 'Please answer at least one question before submitting.';
+        return;
+      }
+
+      btn.disabled = true;
+      btn.textContent = 'Submitting…';
+
+      try {
+        const res = await fetch('/api/survey/responses', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload),
+        });
+        if (!res.ok) {
+          const err = await res.json().catch(() => ({}));
+          throw new Error(err.error || 'Something went wrong. Please try again.');
+        }
+        form.hidden = true;
+        document.querySelector('.notice').hidden = true;
+        document.querySelector('.lead').hidden = true;
+        document.getElementById('thanks').hidden = false;
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      } catch (err) {
+        errEl.textContent = err.message;
+        btn.disabled = false;
+        btn.textContent = 'Submit Survey';
+      }
+    });
+  </script>
+</body>
+</html>

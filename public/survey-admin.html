@@ -1,0 +1,679 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="robots" content="noindex, nofollow" />
+  <title>Membership Survey – Admin – W4TRC</title>
+  <link rel="stylesheet" href="/styles.css" />
+  <script src="/sentry.min.js"></script>
+  <script src="/sentry-init.js"></script>
+  <style>
+    .container {
+      max-width: 960px;
+    }
+
+    .view-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .view-header h1 {
+      margin: 0;
+    }
+
+    .muted {
+      color: var(--w4-ink-muted);
+      font-size: 0.85rem;
+    }
+
+    .toolbar {
+      display: flex;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+    }
+
+    .toolbar button,
+    .tabs button,
+    button.small {
+      margin-top: 0;
+      padding: 0.45rem 0.9rem;
+      font-size: 0.85rem;
+    }
+
+    button.ghost {
+      background: transparent;
+      border: 1px solid var(--w4-border);
+      color: var(--w4-ink-muted);
+    }
+
+    button.ghost:hover {
+      background: var(--w4-surface-2);
+      color: var(--w4-ink);
+    }
+
+    button.danger {
+      background: transparent;
+      border: 1px solid rgba(248,113,113,.4);
+      color: #fca5a5;
+    }
+
+    button.danger:hover {
+      background: rgba(248,113,113,.12);
+    }
+
+    .tabs {
+      display: flex;
+      gap: 0.4rem;
+      margin: 1.5rem 0 1rem;
+      border-bottom: 1px solid var(--w4-border);
+      padding-bottom: 0.75rem;
+      flex-wrap: wrap;
+    }
+
+    .tabs button {
+      background: transparent;
+      border: 1px solid transparent;
+      color: var(--w4-ink-muted);
+    }
+
+    .tabs button[aria-selected="true"] {
+      background: var(--w4-surface-2);
+      border-color: var(--w4-border);
+      color: var(--w4-ink);
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 0.75rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .stat {
+      background: var(--w4-surface-2);
+      border: 1px solid var(--w4-border);
+      border-radius: 8px;
+      padding: 0.85rem 1rem;
+    }
+
+    .stat .n {
+      font-size: 1.6rem;
+      font-weight: 700;
+      color: var(--w4-ink);
+    }
+
+    .card {
+      background: var(--w4-surface-2);
+      border: 1px solid var(--w4-border);
+      border-radius: 8px;
+      padding: 1rem 1.25rem;
+      margin-bottom: 0.9rem;
+    }
+
+    .card h3 {
+      margin: 0 0 0.75rem;
+      font-size: 1rem;
+      color: var(--w4-brand);
+    }
+
+    .section-title {
+      margin: 2rem 0 0.75rem;
+      font-size: 1.1rem;
+      color: var(--w4-accent);
+    }
+
+    .bar-row {
+      display: grid;
+      grid-template-columns: minmax(8rem, 15rem) 1fr 4.5rem;
+      gap: 0.75rem;
+      align-items: center;
+      font-size: 0.88rem;
+      padding: 0.2rem 0;
+    }
+
+    .bar-track {
+      height: 0.7rem;
+      background: rgba(255,255,255,.05);
+      border-radius: 99px;
+      overflow: hidden;
+      display: flex;
+    }
+
+    .bar-fill {
+      height: 100%;
+      background: var(--w4-brand);
+    }
+
+    .bar-fill.lvl1 { background: rgba(43,108,176,.55); }
+    .bar-fill.lvl2 { background: var(--w4-accent); }
+
+    .bar-count {
+      text-align: right;
+      color: var(--w4-ink-muted);
+      font-variant-numeric: tabular-nums;
+    }
+
+    .legend {
+      display: flex;
+      gap: 1rem;
+      font-size: 0.8rem;
+      color: var(--w4-ink-muted);
+      margin-bottom: 0.75rem;
+      flex-wrap: wrap;
+    }
+
+    .legend i {
+      display: inline-block;
+      width: 0.7rem;
+      height: 0.7rem;
+      border-radius: 2px;
+      margin-right: 0.35rem;
+      vertical-align: -1px;
+    }
+
+    .other-list,
+    .text-list {
+      list-style: none;
+      padding: 0;
+      margin: 0.75rem 0 0;
+    }
+
+    .other-list li,
+    .text-list li {
+      padding: 0.55rem 0;
+      border-top: 1px solid var(--w4-border);
+      font-size: 0.9rem;
+      line-height: 1.5;
+      white-space: pre-wrap;
+    }
+
+    .who {
+      display: block;
+      font-size: 0.78rem;
+      color: var(--w4-ink-muted);
+      white-space: normal;
+      margin-top: 0.15rem;
+    }
+
+    .other-label {
+      font-size: 0.8rem;
+      color: var(--w4-ink-muted);
+      margin-top: 0.75rem;
+    }
+
+    table.people {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.88rem;
+    }
+
+    table.people th,
+    table.people td {
+      text-align: left;
+      padding: 0.5rem 0.5rem;
+      border-top: 1px solid var(--w4-border);
+      vertical-align: top;
+    }
+
+    table.people th {
+      color: var(--w4-ink-muted);
+      font-weight: 600;
+      border-top: none;
+    }
+
+    .table-wrap {
+      overflow-x: auto;
+    }
+
+    .resp-top {
+      display: flex;
+      justify-content: space-between;
+      gap: 1rem;
+      align-items: flex-start;
+      margin-bottom: 0.5rem;
+    }
+
+    .resp-who {
+      font-weight: 700;
+      color: var(--w4-brand);
+    }
+
+    dl.answers {
+      margin: 0;
+      display: grid;
+      grid-template-columns: minmax(10rem, 16rem) 1fr;
+      gap: 0.35rem 1rem;
+      font-size: 0.88rem;
+    }
+
+    dl.answers dt {
+      color: var(--w4-ink-muted);
+    }
+
+    dl.answers dd {
+      margin: 0;
+      white-space: pre-wrap;
+    }
+
+    .tag {
+      display: inline-block;
+      font-size: 0.75rem;
+      padding: 0.1rem 0.5rem;
+      border-radius: 99px;
+      border: 1px solid var(--w4-border);
+      margin: 0 0.25rem 0.25rem 0;
+    }
+
+    .tag.lvl2 { border-color: var(--w4-accent); color: var(--w4-accent); }
+
+    .login {
+      max-width: 360px;
+      margin-top: 1.5rem;
+    }
+
+    .error-msg {
+      color: #fca5a5;
+      font-size: 0.9rem;
+      margin-top: 0.75rem;
+    }
+
+    .filter {
+      max-width: 320px;
+      margin: 0 0 1rem;
+    }
+
+    @media (max-width: 600px) {
+      .bar-row {
+        grid-template-columns: 1fr 3.5rem;
+        gap: 0.2rem 0.5rem;
+      }
+
+      .bar-row .bar-label {
+        grid-column: 1 / -1;
+      }
+
+      dl.answers {
+        grid-template-columns: 1fr;
+      }
+
+      dl.answers dd {
+        margin-bottom: 0.5rem;
+      }
+
+      .resp-top {
+        flex-direction: column;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="view-header">
+      <div>
+        <h1>Membership Survey</h1>
+        <p class="muted" style="margin: 0.25rem 0 0;">Admin view &mdash; not public</p>
+      </div>
+      <div class="toolbar" id="toolbar" hidden>
+        <button class="ghost" id="refresh-btn">Refresh</button>
+        <button class="ghost" id="csv-btn">Export CSV</button>
+        <button class="ghost" id="logout-btn">Sign out</button>
+      </div>
+    </div>
+
+    <form class="login" id="login-form" hidden>
+      <label>Admin key
+        <input type="password" name="key" autocomplete="current-password" required />
+      </label>
+      <button type="submit">Sign in</button>
+      <div class="error-msg" id="login-error"></div>
+    </form>
+
+    <div id="app" hidden>
+      <div class="tabs" role="tablist">
+        <button role="tab" data-tab="summary" aria-selected="true">Summary</button>
+        <button role="tab" data-tab="people" aria-selected="false">Contacts &amp; Volunteers</button>
+        <button role="tab" data-tab="ideas" aria-selected="false">Suggestions &amp; Comments</button>
+        <button role="tab" data-tab="responses" aria-selected="false">All Responses</button>
+      </div>
+      <div id="view">Loading…</div>
+    </div>
+  </div>
+
+  <script type="module">
+    import { SECTIONS, CONTACT_FIELDS, INTEREST_SCALE, allQuestions } from '/survey-questions.js';
+
+    const KEY_STORE = 'w4trc_survey_admin_key';
+    const QUESTIONS = allQuestions();
+    let rows = [];
+    let tab = 'summary';
+
+    const $ = id => document.getElementById(id);
+    const esc = s => String(s ?? '')
+      .replace(/&/g, '&amp;').replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+
+    function getKey() {
+      try { return sessionStorage.getItem(KEY_STORE) || ''; } catch { return ''; }
+    }
+    function setKey(k) {
+      try { k ? sessionStorage.setItem(KEY_STORE, k) : sessionStorage.removeItem(KEY_STORE); } catch {}
+    }
+
+    async function api(method, query = '') {
+      const res = await fetch('/api/survey/responses' + query, {
+        method,
+        headers: { Authorization: 'Bearer ' + getKey() },
+      });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) {
+        const err = new Error(data.error || `HTTP ${res.status}`);
+        err.status = res.status;
+        throw err;
+      }
+      return data;
+    }
+
+    function showLogin(msg = '') {
+      $('app').hidden = true;
+      $('toolbar').hidden = true;
+      $('login-form').hidden = false;
+      $('login-error').textContent = msg;
+      $('login-form').key.focus();
+    }
+
+    async function load() {
+      $('view').innerHTML = 'Loading…';
+      try {
+        rows = await api('GET');
+        $('login-form').hidden = true;
+        $('app').hidden = false;
+        $('toolbar').hidden = false;
+        render();
+      } catch (err) {
+        if (err.status === 401) { setKey(''); showLogin('Incorrect key.'); }
+        else if (err.status === 503) showLogin(err.message);
+        else $('view').innerHTML = `<p class="muted">Failed to load: ${esc(err.message)}</p>`;
+      }
+    }
+
+    // ---------- helpers ----------
+
+    function whoLabel(r) {
+      const parts = [r.callsign, r.name].filter(Boolean).map(esc);
+      return parts.length ? parts.join(' &mdash; ') : '<em>Anonymous</em>';
+    }
+
+    function formatDate(createdAt) {
+      if (!createdAt) return '';
+      const d = new Date(createdAt.endsWith('Z') ? createdAt : createdAt.replace(' ', 'T') + 'Z');
+      return d.toLocaleString('en-US', {
+        month: 'short', day: 'numeric', year: 'numeric', hour: 'numeric', minute: '2-digit',
+      });
+    }
+
+    function pct(n, d) {
+      return d ? Math.round((n / d) * 100) : 0;
+    }
+
+    function barRow(label, count, total) {
+      const p = pct(count, total);
+      return `<div class="bar-row">
+        <span class="bar-label">${esc(label)}</span>
+        <div class="bar-track"><div class="bar-fill" style="width:${p}%"></div></div>
+        <span class="bar-count">${count} · ${p}%</span>
+      </div>`;
+    }
+
+    function otherAnswers(qid) {
+      return rows
+        .filter(r => r.answers[qid + '_other'])
+        .map(r => `<li>${esc(r.answers[qid + '_other'])}</li>`).join('');
+    }
+
+    // ---------- tabs ----------
+
+    function renderSummary() {
+      const total = rows.length;
+      if (!total) return '<p class="muted"><em>No responses yet.</em></p>';
+
+      const withContact = rows.filter(r => CONTACT_FIELDS.some(f => r[f.id])).length;
+      const volunteers = rows.filter(r => r.answers.volunteer?.length).length;
+      const last = rows[0]?.created_at;
+
+      let html = `<div class="stats">
+        <div class="stat"><div class="n">${total}</div><div class="muted">Responses</div></div>
+        <div class="stat"><div class="n">${total - withContact}</div><div class="muted">Anonymous</div></div>
+        <div class="stat"><div class="n">${volunteers}</div><div class="muted">Offered to help</div></div>
+        <div class="stat"><div class="n" style="font-size:1rem;padding-top:.45rem">${esc(formatDate(last))}</div><div class="muted">Latest response</div></div>
+      </div>`;
+
+      for (const s of SECTIONS) {
+        const qs = s.questions.filter(q => q.type !== 'text');
+        if (!qs.length) continue;
+        html += `<h2 class="section-title">${esc(s.title)}</h2>`;
+
+        for (const q of qs) {
+          const answered = rows.filter(r => r.answers[q.id] !== undefined).length;
+
+          if (q.type === 'radio' || q.type === 'checkbox') {
+            const counts = q.options.map(o => ({
+              o,
+              n: rows.filter(r => q.type === 'radio' ? r.answers[q.id] === o : r.answers[q.id]?.includes(o)).length,
+            }));
+            if (q.type === 'checkbox') counts.sort((a, b) => b.n - a.n);
+            const others = q.other ? otherAnswers(q.id) : '';
+            html += `<div class="card">
+              <h3>${esc(q.label)}</h3>
+              <p class="muted" style="margin:-.4rem 0 .6rem">${answered} of ${total} answered${q.type === 'checkbox' ? ' · pick any' : ''}</p>
+              ${counts.map(c => barRow(c.o, c.n, answered)).join('')}
+              ${others ? `<div class="other-label">“Other” answers:</div><ul class="other-list">${others}</ul>` : ''}
+            </div>`;
+          }
+
+          if (q.type === 'scale') {
+            const ranked = q.items.map(item => {
+              const lv = q.scale.map((_, i) => rows.filter(r => r.answers[q.id]?.[item.id] === i).length);
+              const n = lv.reduce((a, b) => a + b, 0);
+              // Score: very = 2, somewhat = 1, averaged over people who rated it.
+              const score = n ? lv.reduce((a, c, i) => a + c * i, 0) / n : 0;
+              return { item, lv, n, score };
+            }).sort((a, b) => b.lv[2] - a.lv[2] || b.score - a.score);
+
+            html += `<div class="card">
+              <h3>Interest ranking</h3>
+              <div class="legend">
+                <span><i style="background:var(--w4-accent)"></i>${esc(INTEREST_SCALE[2])}</span>
+                <span><i style="background:rgba(43,108,176,.55)"></i>${esc(INTEREST_SCALE[1])}</span>
+                <span>Sorted by “very interested”. Count shows very / somewhat.</span>
+              </div>
+              ${ranked.map(({ item, lv, n }) => `<div class="bar-row">
+                <span class="bar-label">${esc(item.label)}</span>
+                <div class="bar-track" title="${lv[2]} very, ${lv[1]} somewhat, ${lv[0]} not interested (${n} rated)">
+                  <div class="bar-fill lvl2" style="width:${pct(lv[2], total)}%"></div>
+                  <div class="bar-fill lvl1" style="width:${pct(lv[1], total)}%"></div>
+                </div>
+                <span class="bar-count">${lv[2]} / ${lv[1]}</span>
+              </div>`).join('')}
+            </div>`;
+          }
+        }
+      }
+      return html;
+    }
+
+    function renderPeople() {
+      const people = rows.filter(r => CONTACT_FIELDS.some(f => r[f.id]));
+      if (!people.length) return '<p class="muted"><em>No one has left contact info yet.</em></p>';
+
+      const interestQ = QUESTIONS.find(q => q.type === 'scale');
+      const tableRows = people.map(r => {
+        const help = [...(r.answers.volunteer || []), r.answers.volunteer_other].filter(Boolean);
+        const very = interestQ
+          ? interestQ.items.filter(i => r.answers[interestQ.id]?.[i.id] === 2).map(i => i.label.split(' (')[0])
+          : [];
+        const contact = [
+          r.email ? `<a href="mailto:${esc(r.email)}" style="color:var(--w4-ink)">${esc(r.email)}</a>` : '',
+          r.phone ? esc(r.phone) : '',
+        ].filter(Boolean).join('<br>');
+        return `<tr>
+          <td>${whoLabel(r)}<span class="who">${esc(formatDate(r.created_at))}</span></td>
+          <td>${contact || '<span class="muted">—</span>'}</td>
+          <td>${r.contact_ok ? 'Yes' : '<span class="muted">No</span>'}</td>
+          <td>${help.map(h => `<span class="tag">${esc(h)}</span>`).join('') || '<span class="muted">—</span>'}</td>
+          <td>${very.map(h => `<span class="tag lvl2">${esc(h)}</span>`).join('') || '<span class="muted">—</span>'}</td>
+        </tr>`;
+      }).join('');
+
+      return `<p class="muted" style="margin-top:0">${people.length} respondent(s) left contact info. Only reach out to people marked “OK to contact”.</p>
+        <div class="table-wrap"><table class="people">
+          <thead><tr><th>Who</th><th>Contact</th><th>OK to contact</th><th>Offered to help with</th><th>Very interested in</th></tr></thead>
+          <tbody>${tableRows}</tbody>
+        </table></div>`;
+    }
+
+    function renderIdeas() {
+      const textQs = QUESTIONS.filter(q => q.type === 'text');
+      return textQs.map(q => {
+        const items = rows.filter(r => r.answers[q.id]);
+        return `<div class="card">
+          <h3>${esc(q.label)} <span class="muted">(${items.length})</span></h3>
+          ${items.length
+            ? `<ul class="text-list">${items.map(r => `<li>${esc(r.answers[q.id])}<span class="who">${whoLabel(r)} · ${esc(formatDate(r.created_at))}</span></li>`).join('')}</ul>`
+            : '<p class="muted"><em>None yet.</em></p>'}
+        </div>`;
+      }).join('');
+    }
+
+    function answerText(q, a) {
+      const v = a[q.id];
+      let out = '';
+      if (q.type === 'checkbox') out = (v || []).join(', ');
+      else if (q.type === 'scale') {
+        return q.items
+          .filter(i => v?.[i.id] > 0)
+          .sort((x, y) => v[y.id] - v[x.id])
+          .map(i => `<span class="tag${v[i.id] === 2 ? ' lvl2' : ''}">${esc(i.label.split(' (')[0])}</span>`).join('');
+      } else out = v ?? '';
+      if (a[q.id + '_other']) out = [out === 'Other' ? '' : out, 'Other: ' + a[q.id + '_other']].filter(Boolean).join(', ');
+      return esc(out);
+    }
+
+    function renderResponses(filter = '') {
+      const f = filter.trim().toLowerCase();
+      const list = f ? rows.filter(r => JSON.stringify(r).toLowerCase().includes(f)) : rows;
+      const cards = list.map(r => {
+        const dl = QUESTIONS.map(q => {
+          const t = answerText(q, r.answers);
+          return t ? `<dt>${esc(q.type === 'scale' ? 'Interests (orange = very)' : q.label)}</dt><dd>${t}</dd>` : '';
+        }).join('');
+        const contact = [r.email, r.phone].filter(Boolean).map(esc).join(' · ');
+        return `<div class="card">
+          <div class="resp-top">
+            <div>
+              <div class="resp-who">${whoLabel(r)}</div>
+              ${contact ? `<div class="muted">${contact}${r.contact_ok ? ' · OK to contact' : ''}</div>` : ''}
+              <div class="muted">#${r.id} · ${esc(formatDate(r.created_at))}</div>
+            </div>
+            <button class="small danger" data-delete="${r.id}">Delete</button>
+          </div>
+          ${dl ? `<dl class="answers">${dl}</dl>` : '<p class="muted"><em>No answers.</em></p>'}
+        </div>`;
+      }).join('');
+      return `<input class="filter" id="filter" type="search" placeholder="Search responses…" value="${esc(filter)}" />
+        <div id="resp-list">${cards || '<p class="muted"><em>No matching responses.</em></p>'}</div>`;
+    }
+
+    function render() {
+      document.querySelectorAll('.tabs button').forEach(b =>
+        b.setAttribute('aria-selected', String(b.dataset.tab === tab)));
+      const view = $('view');
+      if (tab === 'summary') view.innerHTML = renderSummary();
+      if (tab === 'people') view.innerHTML = renderPeople();
+      if (tab === 'ideas') view.innerHTML = renderIdeas();
+      if (tab === 'responses') view.innerHTML = renderResponses();
+    }
+
+    // ---------- CSV ----------
+
+    function exportCsv() {
+      const cols = [
+        ['id', r => r.id],
+        ['submitted_utc', r => r.created_at],
+        ...CONTACT_FIELDS.map(f => [f.id, r => r[f.id]]),
+        ['contact_ok', r => (r.contact_ok ? 'yes' : '')],
+      ];
+      for (const q of QUESTIONS) {
+        if (q.type === 'scale') {
+          for (const i of q.items) cols.push([`${q.id}: ${i.label}`, r => q.scale[r.answers[q.id]?.[i.id]] ?? '']);
+        } else {
+          cols.push([q.label, r => (Array.isArray(r.answers[q.id]) ? r.answers[q.id].join('; ') : r.answers[q.id])]);
+        }
+        if (q.other) cols.push([`${q.label} (other)`, r => r.answers[q.id + '_other']]);
+      }
+      const cell = v => {
+        const s = String(v ?? '');
+        return /[",\n\r]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s;
+      };
+      const csv = [cols.map(c => cell(c[0])).join(',')]
+        .concat(rows.map(r => cols.map(c => cell(c[1](r))).join(',')))
+        .join('\r\n');
+      const blob = new Blob(['﻿' + csv], { type: 'text/csv;charset=utf-8' });
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = `w4trc-survey-${new Date().toISOString().slice(0, 10)}.csv`;
+      a.click();
+      URL.revokeObjectURL(a.href);
+    }
+
+    // ---------- events ----------
+
+    $('login-form').addEventListener('submit', e => {
+      e.preventDefault();
+      setKey(e.target.key.value.trim());
+      e.target.key.value = '';
+      load();
+    });
+
+    $('logout-btn').addEventListener('click', () => { setKey(''); rows = []; showLogin(); });
+    $('refresh-btn').addEventListener('click', load);
+    $('csv-btn').addEventListener('click', exportCsv);
+
+    document.querySelector('.tabs').addEventListener('click', e => {
+      const b = e.target.closest('button[data-tab]');
+      if (!b) return;
+      tab = b.dataset.tab;
+      render();
+    });
+
+    $('view').addEventListener('input', e => {
+      if (e.target.id !== 'filter') return;
+      const val = e.target.value;
+      $('view').innerHTML = renderResponses(val);
+      const input = $('filter');
+      input.focus();
+      input.setSelectionRange(val.length, val.length);
+    });
+
+    $('view').addEventListener('click', async e => {
+      const b = e.target.closest('[data-delete]');
+      if (!b) return;
+      if (!confirm(`Delete response #${b.dataset.delete}? This can't be undone.`)) return;
+      b.disabled = true;
+      try {
+        await api('DELETE', `?id=${encodeURIComponent(b.dataset.delete)}`);
+        rows = rows.filter(r => String(r.id) !== b.dataset.delete);
+        render();
+      } catch (err) {
+        alert('Delete failed: ' + err.message);
+        b.disabled = false;
+      }
+    });
+
+    getKey() ? load() : showLogin();
+  </script>
+</body>
+</html>
