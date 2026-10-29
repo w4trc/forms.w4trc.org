@@ -46,7 +46,7 @@ export const SECTIONS = [
       {
         id: 'membership_status',
         type: 'radio',
-        label: 'Your connection to W4TRC',
+        label: 'Your connection to KARC',
         options: ['Current member', 'Former member', 'Not a member yet, but interested', 'Just curious'],
       },
     ],
