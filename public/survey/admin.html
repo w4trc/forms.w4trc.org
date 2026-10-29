@@ -443,11 +443,15 @@
       const withContact = rows.filter(r => CONTACT_FIELDS.some(f => r[f.id])).length;
       const volunteers = rows.filter(r => r.answers.volunteer?.length).length;
       const last = rows[0]?.created_at;
+      // Satisfaction answers start with their 1–5 score, e.g. "4" or "5 – Very satisfied".
+      const scores = rows.map(r => parseInt(r.answers.satisfaction, 10)).filter(n => n >= 1 && n <= 5);
+      const avgSat = scores.length ? (scores.reduce((a, b) => a + b, 0) / scores.length).toFixed(1) : '—';
 
       let html = `<div class="stats">
         <div class="stat"><div class="n">${total}</div><div class="muted">Responses</div></div>
         <div class="stat"><div class="n">${total - withContact}</div><div class="muted">Anonymous</div></div>
         <div class="stat"><div class="n">${volunteers}</div><div class="muted">Offered to help</div></div>
+        <div class="stat"><div class="n">${avgSat}<span class="muted" style="font-size:.9rem"> / 5</span></div><div class="muted">Avg. satisfaction (${scores.length})</div></div>
         <div class="stat"><div class="n" style="font-size:1rem;padding-top:.45rem">${esc(formatDate(last))}</div><div class="muted">Latest response</div></div>
       </div>`;
 
