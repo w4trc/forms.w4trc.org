@@ -1,11 +1,3 @@
-export async function onRequestGet({ env }) {
-  const result = await env.db.prepare(
-    "SELECT id, callsign, num_people, created_at FROM christmas_party_signups ORDER BY created_at"
-  ).all();
-
-  return Response.json(result.results);
-}
-
 export async function onRequestPost({ request, env }) {
   let body;
   try {
