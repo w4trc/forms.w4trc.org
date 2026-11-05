@@ -9,10 +9,7 @@ export async function onRequestPost({ request, env }) {
   const callsign = String(body.callsign || "").trim().toUpperCase();
   const numPeople = parseInt(body.num_people, 10);
 
-  if (!callsign) {
-    return Response.json({ error: "Callsign is required" }, { status: 400 });
-  }
-  if (callsign.length > 12 || !/^[A-Z0-9/]+$/.test(callsign)) {
+  if (callsign && (callsign.length > 12 || !/^[A-Z0-9/]+$/.test(callsign))) {
     return Response.json({ error: "Invalid callsign" }, { status: 400 });
   }
   if (isNaN(numPeople) || numPeople < 1 || numPeople > 20) {
