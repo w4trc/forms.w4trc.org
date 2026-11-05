@@ -47,3 +47,10 @@ CREATE TABLE IF NOT EXISTS survey_responses (
   answers TEXT NOT NULL DEFAULT '{}',
   created_at TEXT NOT NULL DEFAULT (datetime('now'))
 );
+
+CREATE TABLE IF NOT EXISTS christmas_party_signups (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  callsign TEXT NOT NULL,
+  num_people INTEGER NOT NULL DEFAULT 1,
+  created_at TEXT NOT NULL DEFAULT (datetime('now'))
+);
