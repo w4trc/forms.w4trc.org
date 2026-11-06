@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="robots" content="noindex" />
+  <title>Christmas Party RSVPs – W4TRC</title>
+  <link rel="stylesheet" href="/styles.css" />
+  <script src="/sentry.min.js"></script>
+  <script src="/sentry-init.js"></script>
+  <style>
+    .view-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 1rem;
+      flex-wrap: wrap;
+      margin-bottom: 1.5rem;
+    }
+    .view-header h1 { margin: 0; }
+    .muted { color: var(--w4-ink-muted); }
+    .toolbar { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+    button.ghost {
+      background: transparent;
+      border: 1px solid var(--w4-border);
+      color: var(--w4-ink);
+    }
+    button.ghost:hover { border-color: var(--w4-brand); }
+
+    .login { max-width: 360px; margin-top: 1.5rem; }
+    .error-msg { color: #fca5a5; font-size: 0.9rem; margin-top: 0.75rem; }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 0.75rem;
+      margin-bottom: 1.5rem;
+    }
+    .stat {
+      background: var(--w4-surface-2);
+      border: 1px solid var(--w4-border);
+      border-radius: 8px;
+      padding: 1rem 1.25rem;
+    }
+    .stat-value {
+      font-size: 2rem;
+      font-weight: 800;
+      color: var(--w4-accent);
+      line-height: 1.1;
+      font-variant-numeric: tabular-nums;
+    }
+    .stat-label { font-size: 0.85rem; color: var(--w4-ink-muted); }
+
+    .rsvp-list { display: flex; flex-direction: column; gap: 0.5rem; }
+    .rsvp {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      background: var(--w4-surface-2);
+      border: 1px solid var(--w4-border);
+      border-radius: 8px;
+      padding: 0.75rem 1rem;
+    }
+    .rsvp-call {
+      font-weight: 800;
+      color: var(--w4-accent);
+      letter-spacing: 0.04em;
+      min-width: 6rem;
+    }
+    .rsvp-call.none { color: var(--w4-ink-muted); font-weight: 400; font-style: italic; letter-spacing: 0; }
+    .rsvp-people { font-weight: 600; }
+    .rsvp-time { margin-left: auto; font-size: 0.85rem; color: var(--w4-ink-muted); }
+    .rsvp button {
+      padding: 0.25rem 0.6rem;
+      font-size: 0.8rem;
+    }
+    @media (max-width: 600px) {
+      .rsvp { flex-wrap: wrap; }
+      .rsvp-time { margin-left: 0; width: 100%; order: 3; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="view-header">
+      <div>
+        <h1>Christmas Party RSVPs</h1>
+        <p class="muted" style="margin: 0.25rem 0 0;">December 10, 2026 &mdash; admin view, not public</p>
+      </div>
+      <div class="toolbar" id="toolbar" hidden>
+        <button class="ghost" id="refresh-btn">Refresh</button>
+        <button class="ghost" id="csv-btn">Export CSV</button>
+        <button class="ghost" id="logout-btn">Sign out</button>
+      </div>
+    </div>
+
+    <form class="login" id="login-form" hidden>
+      <label>Password
+        <input type="password" name="key" inputmode="numeric" autocomplete="current-password" required />
+      </label>
+      <button type="submit">Sign in</button>
+      <div class="error-msg" id="login-error"></div>
+    </form>
+
+    <div id="app" hidden>
+      <div class="stats">
+        <div class="stat"><div class="stat-value" id="total-people">0</div><div class="stat-label">People attending</div></div>
+        <div class="stat"><div class="stat-value" id="total-rsvps">0</div><div class="stat-label">RSVPs</div></div>
+      </div>
+      <div class="rsvp-list" id="list">Loading…</div>
+    </div>
+  </div>
+
+  <script>
+    const API = '/api/christmas-party/signups';
+    const KEY_STORE = 'w4trc_christmas_admin_key';
+    const $ = id => document.getElementById(id);
+    let rows = [];
+
+    function getKey() {
+      try { return sessionStorage.getItem(KEY_STORE) || ''; } catch { return ''; }
+    }
+    function setKey(k) {
+      try { k ? sessionStorage.setItem(KEY_STORE, k) : sessionStorage.removeItem(KEY_STORE); } catch {}
+    }
+
+    async function api(method, query = '') {
+      const res = await fetch(API + query, {
+        method,
+        headers: { Authorization: 'Bearer ' + getKey() },
+      });
+      if (!res.ok) {
+        const body = await res.json().catch(() => ({}));
+        const err = new Error(body.error || 'HTTP ' + res.status);
+        err.status = res.status;
+        throw err;
+      }
+      return res.json();
+    }
+
+    function showLogin(msg = '') {
+      $('app').hidden = true;
+      $('toolbar').hidden = true;
+      $('login-form').hidden = false;
+      $('login-error').textContent = msg;
+      $('login-form').key.focus();
+    }
+
+    async function load() {
+      try {
+        rows = await api('GET');
+        $('login-form').hidden = true;
+        $('app').hidden = false;
+        $('toolbar').hidden = false;
+        render();
+      } catch (err) {
+        if (err.status === 401) { setKey(''); showLogin('Incorrect password.'); }
+        else showLogin(err.message);
+      }
+    }
+
+    function render() {
+      const total = rows.reduce((sum, r) => sum + (r.num_people || 0), 0);
+      $('total-people').textContent = total;
+      $('total-rsvps').textContent = rows.length;
+
+      if (!rows.length) {
+        $('list').innerHTML = '<p class="muted">No RSVPs yet.</p>';
+        return;
+      }
+
+      $('list').innerHTML = rows.map(r => `
+        <div class="rsvp">
+          ${r.callsign
+            ? `<span class="rsvp-call">${esc(r.callsign)}</span>`
+            : `<span class="rsvp-call none">No callsign</span>`}
+          <span class="rsvp-people">${r.num_people} ${r.num_people === 1 ? 'person' : 'people'}</span>
+          <span class="rsvp-time">${esc(fmtDate(r.created_at))}</span>
+          <button class="ghost" data-del="${r.id}">Remove</button>
+        </div>
+      `).join('');
+    }
+
+    // D1 stores UTC as "YYYY-MM-DD HH:MM:SS"; show it in local time.
+    function fmtDate(s) {
+      const d = new Date(String(s).replace(' ', 'T') + 'Z');
+      return isNaN(d) ? s : d.toLocaleString([], { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' });
+    }
+
+    function esc(str) {
+      return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;');
+    }
+
+    function exportCsv() {
+      const lines = [['Callsign', 'People', 'Submitted (UTC)']]
+        .concat(rows.map(r => [r.callsign || '', r.num_people, r.created_at]))
+        .map(cols => cols.map(c => `"${String(c).replace(/"/g, '""')}"`).join(','));
+      const blob = new Blob([lines.join('\r\n')], { type: 'text/csv' });
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = 'christmas-party-rsvps.csv';
+      a.click();
+      URL.revokeObjectURL(a.href);
+    }
+
+    $('list').addEventListener('click', async e => {
+      const btn = e.target.closest('[data-del]');
+      if (!btn) return;
+      // Two-click confirm instead of a browser dialog.
+      if (btn.dataset.armed !== '1') {
+        btn.dataset.armed = '1';
+        btn.textContent = 'Confirm?';
+        setTimeout(() => { if (btn.isConnected) { btn.dataset.armed = ''; btn.textContent = 'Remove'; } }, 3000);
+        return;
+      }
+      btn.disabled = true;
+      try {
+        await api('DELETE', '?id=' + encodeURIComponent(btn.dataset.del));
+        rows = rows.filter(r => String(r.id) !== btn.dataset.del);
+        render();
+      } catch (err) {
+        btn.disabled = false;
+        btn.textContent = 'Failed';
+      }
+    });
+
+    $('login-form').addEventListener('submit', e => {
+      e.preventDefault();
+      setKey(e.target.key.value.trim());
+      e.target.reset();
+      load();
+    });
+    $('refresh-btn').addEventListener('click', load);
+    $('csv-btn').addEventListener('click', exportCsv);
+    $('logout-btn').addEventListener('click', () => { setKey(''); rows = []; showLogin(); });
+
+    getKey() ? load() : showLogin();
+  </script>
+</body>
+</html>
