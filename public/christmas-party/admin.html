@@ -67,7 +67,8 @@
       letter-spacing: 0.04em;
       min-width: 6rem;
     }
-    .rsvp-call.none { color: var(--w4-ink-muted); font-weight: 400; font-style: italic; letter-spacing: 0; }
+    .rsvp-bring { flex: 1 1 12rem; font-size: 0.9rem; color: var(--w4-ink-muted); }
+    .rsvp-bring.none { font-style: italic; }
     .rsvp-people { font-weight: 600; }
     .rsvp-time { margin-left: auto; font-size: 0.85rem; color: var(--w4-ink-muted); }
     .rsvp button {
@@ -76,7 +77,8 @@
     }
     @media (max-width: 600px) {
       .rsvp { flex-wrap: wrap; }
-      .rsvp-time { margin-left: 0; width: 100%; order: 3; }
+      .rsvp-bring { width: 100%; order: 3; }
+      .rsvp-time { margin-left: 0; width: 100%; order: 4; }
     }
   </style>
 </head>
@@ -171,10 +173,11 @@
 
       $('list').innerHTML = rows.map(r => `
         <div class="rsvp">
-          ${r.callsign
-            ? `<span class="rsvp-call">${esc(r.callsign)}</span>`
-            : `<span class="rsvp-call none">No callsign</span>`}
+          <span class="rsvp-call">${esc(r.name)}</span>
           <span class="rsvp-people">${r.num_people} ${r.num_people === 1 ? 'person' : 'people'}</span>
+          ${r.bringing_item
+            ? `<span class="rsvp-bring">Bringing: ${esc(r.bringing_item)}</span>`
+            : `<span class="rsvp-bring none">Not bringing anything listed</span>`}
           <span class="rsvp-time">${esc(fmtDate(r.created_at))}</span>
           <button class="ghost" data-del="${r.id}">Remove</button>
         </div>
@@ -196,8 +199,8 @@
     }
 
     function exportCsv() {
-      const lines = [['Callsign', 'People', 'Submitted (UTC)']]
-        .concat(rows.map(r => [r.callsign || '', r.num_people, r.created_at]))
+      const lines = [['Name / Callsign', 'People', 'Bringing', 'Submitted (UTC)']]
+        .concat(rows.map(r => [r.name || '', r.num_people, r.bringing_item || '', r.created_at]))
         .map(cols => cols.map(c => `"${String(c).replace(/"/g, '""')}"`).join(','));
       const blob = new Blob([lines.join('\r\n')], { type: 'text/csv' });
       const a = document.createElement('a');

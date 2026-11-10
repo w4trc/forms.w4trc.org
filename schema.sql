@@ -48,9 +48,13 @@ CREATE TABLE IF NOT EXISTS survey_responses (
   created_at TEXT NOT NULL DEFAULT (datetime('now'))
 );
 
+-- `name` holds "name or callsign". `callsign` is legacy (early RSVPs only had a callsign).
+-- Existing databases: run migrations/2026-11-christmas-party-potluck.sql once.
 CREATE TABLE IF NOT EXISTS christmas_party_signups (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
-  callsign TEXT NOT NULL,
+  name TEXT NOT NULL DEFAULT '',
+  callsign TEXT NOT NULL DEFAULT '',
   num_people INTEGER NOT NULL DEFAULT 1,
+  bringing_item TEXT NOT NULL DEFAULT '',
   created_at TEXT NOT NULL DEFAULT (datetime('now'))
 );

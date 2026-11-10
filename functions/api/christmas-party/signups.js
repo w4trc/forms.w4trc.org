@@ -1,3 +1,12 @@
+// GET    /api/christmas-party/signups        — public list: who's coming and what they're bringing
+//                                              (with admin key: full rows incl. id and timestamp)
+// POST   /api/christmas-party/signups        — add an RSVP
+// DELETE /api/christmas-party/signups?id=N   — admin: remove an RSVP
+// Admin requests need `Authorization: Bearer <CHRISTMAS_ADMIN_KEY>` (a Pages secret).
+
+// Older RSVPs only had a callsign, so fall back to it when name is empty.
+const DISPLAY_NAME = "COALESCE(NULLIF(name, ''), callsign)";
+
 export async function onRequestPost({ request, env }) {
   let body;
   try {
@@ -6,35 +15,46 @@ export async function onRequestPost({ request, env }) {
     return Response.json({ error: "Invalid JSON" }, { status: 400 });
   }
 
-  const callsign = String(body.callsign || "").trim().toUpperCase();
+  const name = String(body.name || "").trim();
+  const bringing = String(body.bringing_item || "").trim();
   const numPeople = parseInt(body.num_people, 10);
 
-  if (callsign && (callsign.length > 12 || !/^[A-Z0-9/]+$/.test(callsign))) {
-    return Response.json({ error: "Invalid callsign" }, { status: 400 });
+  if (!name) {
+    return Response.json({ error: "Name or callsign is required" }, { status: 400 });
+  }
+  if (name.length > 80) {
+    return Response.json({ error: "Name is too long" }, { status: 400 });
+  }
+  if (bringing.length > 300) {
+    return Response.json({ error: "\"What are you bringing\" is too long" }, { status: 400 });
   }
   if (isNaN(numPeople) || numPeople < 1 || numPeople > 20) {
     return Response.json({ error: "Number of people must be between 1 and 20" }, { status: 400 });
   }
 
   await env.db.prepare(
-    "INSERT INTO christmas_party_signups (callsign, num_people) VALUES (?, ?)"
-  ).bind(callsign, numPeople).run();
+    "INSERT INTO christmas_party_signups (name, callsign, num_people, bringing_item) VALUES (?, '', ?, ?)"
+  ).bind(name, numPeople, bringing).run();
 
   return Response.json({ ok: true });
 }
 
-// GET    /api/christmas-party/signups        — admin: list RSVPs
-// DELETE /api/christmas-party/signups?id=N   — admin: remove an RSVP
-// Admin requests need `Authorization: Bearer <CHRISTMAS_ADMIN_KEY>` (a Pages secret).
-
 export async function onRequestGet({ request, env }) {
-  const denied = await checkAdmin(request, env);
-  if (denied) return denied;
+  if (request.headers.has("Authorization")) {
+    const denied = await checkAdmin(request, env);
+    if (denied) return denied;
+
+    const { results } = await env.db.prepare(
+      `SELECT id, ${DISPLAY_NAME} AS name, num_people, bringing_item, created_at
+       FROM christmas_party_signups ORDER BY created_at, id`
+    ).all();
+    return Response.json(results, { headers: { "Cache-Control": "no-store" } });
+  }
 
   const { results } = await env.db.prepare(
-    "SELECT id, callsign, num_people, created_at FROM christmas_party_signups ORDER BY created_at, id"
+    `SELECT ${DISPLAY_NAME} AS name, num_people, bringing_item
+     FROM christmas_party_signups ORDER BY created_at, id`
   ).all();
-
   return Response.json(results, { headers: { "Cache-Control": "no-store" } });
 }
 
